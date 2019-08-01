@@ -63,18 +63,6 @@
                     imgs.push($el.attr("src"));
                     return true;
                 }
-                if (elTagName === 'SVG') {
-                    var svgpng="";
-                    $el.attr('version', 1.1);
-                    $el.attr('xmlns', 'http://www.w3.org/2000/svg');
-                    try {
-                      svgpng='data:image/svg+xml;base64,' + btoa($el.html());
-                    } catch (e) {
-                      console.error('创建svg失败');
-                    }
-                    imgs.push(svgpng);
-                    return true;
-                }
                 //canvas
                 if(elTagName=="CANVAS"){
                     imgs.push(el.toDataURL());
