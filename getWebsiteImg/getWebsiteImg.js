@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取网站所有图片
 // @namespace    https://www.chlung.com/
-// @version      0.1
+// @version      0.2
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
 // @match        *://*/*
@@ -86,17 +86,20 @@
                 imgResolution=height>=32&&width>=32?imgResolution:"";
                 var fe=GetFileExt(src);
                 var fileExt=fe.type!=""?fe.ext+"("+fe.type+")":fe.ext;
+                var LocalDownload=fe.type!=""?"Y":"N";
                 var yellowBorder="";
                 var isSelect="select-item";
                 if(!imgObj.isCors){
                     yellowBorder="border:3px solid red";
                     //isSelect="";
                 }
+                var nameExt=fe.ext=="other"?"jpg":fe.ext;
+                var fileName=(Math.round(new Date().getTime()/1000)+index)+"."+nameExt;
                 var imgTitle="分辨率: {0} / 类型: {1}".format(naturalWH,fileExt);
-                h.push('<li class="{8}" style="width:{1}px;height:{2}px;{7}" title="{6}" data-src="{0}" data-type="{9}">\
+                h.push('<li class="{8}" style="{7}" title="{6}" data-src="{0}" data-type="{9}" data-localdownload="{11}" data-filename="{10}">\
                             <img src="{0}" width="{1}px" height="{2}px">\
                             {5}</li>'
-                        .format(src,width,height,width-6,height-6,imgResolution,imgTitle,yellowBorder,isSelect,fe.ext));
+                        .format(src,width,height,width-6,height-6,imgResolution,imgTitle,yellowBorder,isSelect,fe.ext,fileName,LocalDownload));
             });
             return h.join("");
         }
@@ -162,9 +165,8 @@
             catch(e){}
             return xhr.status >= 200 && xhr.status <= 299;
         }
-        var downloadImg=function (src,index,fileExt){
-            fileExt=fileExt=="other"?"jpg":fileExt;
-            var downloadName=(Math.round(new Date().getTime()/1000)+index)+"."+fileExt;
+        var downloadImg=function (index,imgs){
+            if(index>imgs.length-1) return;
             /*
             //不能下载不支持CORS的图片
             var image = new Image();
@@ -184,7 +186,41 @@
                 $imgdownload.remove();
             }
             */
-           GM_download(src, downloadName);
+           var delayTime=300;
+            var src=imgs[index].src;
+            var fileName=imgs[index].fileName;
+            var localdownload=imgs[index].localdownload;
+            if(localdownload=="Y"){
+                GM_download(src,fileName);
+                setTimeout(function(){
+                    downloadImg(index + 1,imgs);
+                }, delayTime);
+            }
+            else{
+                GM_download({
+                    url:src,
+                    name:fileName,
+                    onload:function(){
+                        //downloadImg(index + 1,imgs);
+                        setTimeout(function(){
+                            downloadImg(index + 1,imgs);
+                        }, delayTime);
+                    },
+                    onerror:function(e){
+                        console.error("第{0}几张图片{1}下载失败，失败原因：{2}".format(index+1,fileName,e.error));
+                        setTimeout(function(){
+                            downloadImg(index + 1,imgs);
+                        }, delayTime);
+                        //console.log(errMsg);
+                    },
+                    ontimeout: function(){
+			    		console.error("第{0}几张图片{1}下载超时".format(index+1,fileName));
+                        setTimeout(function(){
+                            downloadImg(index + 1,imgs);
+                        }, delayTime);
+			    	}
+                });
+            }
         }
         var RegMenu=function(){
             GM_registerMenuCommand("获取图片",function(){
@@ -223,12 +259,19 @@
                             text:"下载",
                             fn:function(){
                                 var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
+                                var imgs=[];
                                 imgLst.each(function(index,imgItem){
                                     var $imgItem=$(imgItem);
-                                    var src=$imgItem.attr("data-src");
-                                    var fileExt=$imgItem.attr("data-type");
-                                    downloadImg(src,index,fileExt);
+                                    var imgSrc=$imgItem.attr("data-src");
+                                    var localdownload=$imgItem.attr("data-localdownload");
+                                    var imgFileName=$imgItem.attr("data-filename");
+                                    imgs.push({
+                                        src:imgSrc,
+                                        fileName:imgFileName,
+                                        localdownload:localdownload
+                                    });
                                 });
+                                downloadImg(0,imgs);
                             }
                         }
                     ]
