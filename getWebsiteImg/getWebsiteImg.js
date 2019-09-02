@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取网站所有图片
 // @namespace    https://www.chlung.com/
-// @version      0.2
+// @version      0.3
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
 // @match        *://*/*
@@ -74,7 +74,7 @@
                     imgs.push(backgroundImage.slice(5, -2));
                 }
             });
-            imgs=imgs.unique();
+            imgs=ArrayUnique(imgs);
             $.each(imgs,function(index,item){
                 var imgObj=HandleImg(item);
                 var src=imgObj.imgSrc;
@@ -82,7 +82,7 @@
                 var height=imgObj.height;
                 var naturalWH=imgObj.naturalWidth+"x"+imgObj.naturalHeight;
                 if(imgObj.naturalWidth<=15||imgObj.naturalHeight<=15) {return true;}
-                var imgResolution='<span class="imageItemResolution" style="width:{0}px;">{1}</span>'.format(width,naturalWH);
+                var imgResolution=StringFormat('<span class="imageItemResolution" style="width:{0}px;">{1}</span>',width,naturalWH);
                 imgResolution=height>=32&&width>=32?imgResolution:"";
                 var fe=GetFileExt(src);
                 var fileExt=fe.type!=""?fe.ext+"("+fe.type+")":fe.ext;
@@ -95,11 +95,10 @@
                 }
                 var nameExt=fe.ext=="other"?"jpg":fe.ext;
                 var fileName=(Math.round(new Date().getTime()/1000)+index)+"."+nameExt;
-                var imgTitle="分辨率: {0} / 类型: {1}".format(naturalWH,fileExt);
-                h.push('<li class="{8}" style="{7}" title="{6}" data-src="{0}" data-type="{9}" data-localdownload="{11}" data-filename="{10}">\
+                var imgTitle=StringFormat("分辨率: {0} / 类型: {1}",naturalWH,fileExt);
+                h.push(StringFormat('<li class="{8}" style="{7}" title="{6}" data-src="{0}" data-type="{9}" data-localdownload="{11}" data-filename="{10}">\
                             <img src="{0}" width="{1}px" height="{2}px">\
-                            {5}</li>'
-                        .format(src,width,height,width-6,height-6,imgResolution,imgTitle,yellowBorder,isSelect,fe.ext,fileName,LocalDownload));
+                            {5}</li>',src,width,height,width-6,height-6,imgResolution,imgTitle,yellowBorder,isSelect,fe.ext,fileName,LocalDownload));
             });
             return h.join("");
         }
@@ -207,14 +206,14 @@
                         }, delayTime);
                     },
                     onerror:function(e){
-                        console.error("第{0}几张图片{1}下载失败，失败原因：{2}".format(index+1,fileName,e.error));
+                        console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
                         setTimeout(function(){
                             downloadImg(index + 1,imgs);
                         }, delayTime);
                         //console.log(errMsg);
                     },
                     ontimeout: function(){
-			    		console.error("第{0}几张图片{1}下载超时".format(index+1,fileName));
+			    		console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
                         setTimeout(function(){
                             downloadImg(index + 1,imgs);
                         }, delayTime);
@@ -280,6 +279,22 @@
                 $(".JDialog-body").JBoxSelect();
             });
         }
+        var ArrayUnique=function(args){
+            var temparr=[];
+            $.each(args,function(i,v){
+                if($.inArray(v,temparr)==-1) {
+                    temparr.push(v);
+                }
+            });
+            return temparr;
+        }
+         var StringFormat=function(formatStr){
+            var args=arguments;
+            return formatStr.replace(/\{(\d+)\}/g, function(m, i){
+                i=parseInt(i);
+                return args[i+1];
+            });
+         }
         this.init=function(){
             createStyle();
             createHtml();
@@ -288,15 +303,4 @@
     }
     var gi=new GetImg();
     gi.init();
-    if (typeof Array.prototype['unique'] == 'undefined') {
-        Array.prototype.unique = function() {
-            var temparr=[];
-            $.each(this,function(i,v){
-                if($.inArray(v,temparr)==-1) {
-                    temparr.push(v);
-                }
-            });
-            return temparr;
-        }
-    }
 })();
