@@ -74,7 +74,6 @@
                 }
             });
             $wordTransIcon.click(function(e){
-                console.log("翻译");
                 var selecter=window.getSelection();
                 var selectText = selecter.toString().trim();
                 var rang = selecter.getRangeAt(0);
@@ -82,6 +81,7 @@
                 //rang.surroundContents($(temp)[0]);
                 Trans.transText=selectText;
                 Trans.transEngine=defaultTransEngine;
+                Trans.transTargetLang=Trans.transEngine=="yd"?"ZH-CHS":Trans.transEngine=="ge"?"ZH-CN":"";
                 Trans.Execute(function(transResultJson){
                     TransPanel.popoverEl=$wordTransIcon;
                     TransPanel.Create(transResultJson);
@@ -112,12 +112,9 @@
                     template:StringFormat('<div data-id="transPanel{0}" class="transPanel popover" role="tooltip" style="max-width: 430px;min-width: 310px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',randomCode),
                     content: function () {
                         var wordTransPanelHtml=StringFormat('<div id="transPanelBody{0}">'+
-                                '<div style="padding-bottom: 5px;"><input type="text" value="中文" readonly/> &#x21E8; <select><option value="zh-cn">中文</option><option value="en">英文</option></select>    翻译引擎：<select>{3}</select></div>'+
-                                '<div style="word-wrap:break-word">'+
-                                    '<div style="padding-bottom: 5px;">{1}</div><hr>'+
-                                    '<div style="padding-top: 5px;">{2}</div>'+
-                                '</div>'+
-                            '</div>',randomCode,html.origHtml,html.transHtml,transEngineOptionsHtml);
+                                '<div style="padding-bottom: 5px;"><input type="text" value="{4}" readonly/> &#x21E8; <select>{3}</select>    翻译引擎：<select>{2}</select></div>'+
+                                '<div style="word-wrap:break-word">{1}</div>'+
+                            '</div>',randomCode,html.transHtml,transEngineOptionsHtml,html.langListHtml,html.origLangName);
                         return wordTransPanelHtml;
                     }
                 });
@@ -127,44 +124,82 @@
                 })
             },
             Update:function(resultJson){
-                var $transCont=$(StringFormat("#transPanelBody{0} div:eq(1)",randomCode));
                 var html=this.GetTransContHtml(resultJson);
-                var transContHtml=StringFormat('<div style="padding-bottom: 5px;">{0}</div><hr>',html.origHtml);
-                transContHtml+=StringFormat('<div style="padding-top: 5px;">{0}</div>',html.transHtml);
-                $transCont.html("").html(transContHtml);
+                $(StringFormat("#transPanelBody{0} div:eq(0) input:eq(0)",randomCode)).val("").val(html.origLangName);
+                $(StringFormat("#transPanelBody{0} div:eq(0) select:eq(0)",randomCode)).html("").html(html.langListHtml);
+                $(StringFormat("#transPanelBody{0} div:eq(1)",randomCode)).html("").html(html.transHtml);
             },
             Destroy:function(){
                 $(this.popoverEl).popover("destroy");
             },
             GetTransContHtml:function(resultJson){
-                var html={};
-                var transHtml=[];
-                transHtml.push('<ul style="list-style: none;margin: 0;padding: 0;">');
-                for (var i = 0; i < resultJson.trans.length; i++) {
-                    var transtxt = resultJson.trans[i];
-                    transHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',transtxt))
+                var transObj={};
+                var langListHtml=[];
+                var langList={};
+                var origLang="";
+                var transContHtml="";
+                switch (Trans.transEngine) {
+                    case "yd":
+                        langList=Trans.ydLangList;
+                        origLang=resultJson.origLang.split("2")[0];
+                        break;
+                    case "ge":
+                    default:
+                        langList=Trans.geLangList;
+                        origLang=resultJson.origLang;
+                        break;
                 }
-                transHtml.push("</ul>")
+                if(resultJson.trans.length>0 && resultJson.orig.length>0)
+                {
+                    var transHtml=[];
+                    transHtml.push('<div style="padding-top: 5px;"><ul style="list-style: none;margin: 0;padding: 0;">');
+                    for (var i = 0; i < resultJson.trans.length; i++) {
+                        var transtxt = resultJson.trans[i];
+                        transHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',transtxt))
+                    }
+                    transHtml.push("</ul></div>");
 
-                var origHtml=[];
-                origHtml.push('<ul style="list-style: none;margin: 0;padding: 0;">');
-                for (var j = 0; j < resultJson.orig.length; j++) {
-                    var origtxt = resultJson.orig[j];
-                    origHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',origtxt))
+                    var origHtml=[];
+                    origHtml.push('<div style="padding-bottom: 5px;"><ul style="list-style: none;margin: 0;padding: 0;">');
+                    for (var j = 0; j < resultJson.orig.length; j++) {
+                        var origtxt = resultJson.orig[j];
+                        origHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',origtxt))
+                    }
+                    origHtml.push("</ul></div>");
+                    transContHtml=origHtml.join("")+"<hr/>"+transHtml.join("");
+                    Trans.transOrigLang=origLang;
                 }
-                origHtml.push("</ul>")
-                html.transHtml=transHtml.join("");
-                html.origHtml=origHtml.join("");
-                return html;
+                else{
+                    var txt="该翻译引擎不支持 "+langList[Trans.transOrigLang]+" 翻译成 "+langList[Trans.transTargetLang];
+                    transContHtml=StringFormat("<div><span>{0}</span></div>",txt);
+                }
+                for (var k in langList) {
+                    if (langList.hasOwnProperty(k) && k!=Trans.transOrigLang) {
+                        var v = langList[k];
+                        var selectOption="";
+                        if(Trans.transTargetLang==k){
+                            selectOption='selected="selected"';
+                        }
+                        langListHtml.push(StringFormat('<option value="{0}" {2}>{1}</option>',k,v,selectOption));
+                    }
+                }
+                transObj.origLangName=langList[Trans.transOrigLang];
+                transObj.transHtml=transContHtml;
+                transObj.langListHtml=langListHtml.join("");
+                return transObj;
             },
             BindPanelEvent:function(){
                 //目标语言
                 $(StringFormat("#transPanelBody{0} div:eq(0) select:eq(0)",randomCode)).change(function(e){
-
+                    Trans.transTargetLang=$(this).find("option:selected").val();
+                    Trans.Execute(function(transResultJson){
+                        TransPanel.Update(transResultJson);
+                    })
                 });
                 //翻译引擎
                 $(StringFormat("#transPanelBody{0} div:eq(0) select:eq(1)",randomCode)).change(function(e){
                     Trans.transEngine=$(this).find("option:selected").val();
+                    Trans.transTargetLang=Trans.transEngine=="yd"?"ZH-CHS":Trans.transEngine=="ge"?"ZH-CN":"";
                     Trans.Execute(function(transResultJson){
                         TransPanel.Update(transResultJson);
                     })
@@ -172,10 +207,14 @@
             }
         }
         var Trans={
+            ydLangList:{"zh-CHS":"中文","en":"英文","ja":"日文","ko":"韩文","fr":"法文","es":"西班牙文","pt":"葡萄牙文","it":"意大利文","ru":"俄文","vi":"越南文","de":"德文","ar":"阿拉伯文","id":"印尼文"},
+            geLangList:{"zh-CN":"中文简体","zh-TW":"中文繁体","en":"英文","ja":"日文","ko":"韩文","fr":"法文","es":"西班牙文","pt":"葡萄牙文","it":"意大利文","ru":"俄文","vi":"越南文","de":"德文","ar":"阿拉伯文","id":"印尼文"},
             transEngineList:{"ge":"谷歌","yd":"有道"},
             transEngine:"yd",           //当前翻译引擎。ge(谷歌)/yd(有道)
+            transTargetLang:"",         //目标语言。
+            transOrigLang:"",           //源语言
             transType:"word",           //翻译类型。word(划词翻译)/text(输入文本翻译)/page(整页翻译)
-            transText:"",              //被翻译内容
+            transText:"",               //被翻译内容
             Execute:function(h_onloadfn){
                 var self=this;
                 var h_url="",h_method="GET",h_headers={},h_data="";
@@ -190,11 +229,11 @@
                             "Content-Type":"application/x-www-form-urlencoded",
                             "Referer": "http://fanyi.youdao.com/"
                         }
-                        h_data=StringFormat("from={0}&to={1}&salt={2}&sign={3}&i={4}","AUTO","zh-CHS",tempsalt,tempsign,self.transText);
+                        h_data=StringFormat("from={0}&to={1}&salt={2}&sign={3}&i={4}","AUTO",self.transTargetLang,tempsalt,tempsign,self.transText);
                         break;
                     case "ge":
                     default:
-                        var googleTransApi="https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&sl=auto&tl=zh-CN&hl=zh-CN";
+                        var googleTransApi=StringFormat("https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&sl=auto&tl={0}&hl=zh-CN",self.transTargetLang);
                         h_url=googleTransApi+"&q="+encodeURIComponent(self.transText);
                         break;
                 }
@@ -204,8 +243,10 @@
                     headers:h_headers,
                     data:h_data,
                     onload:function(r){
-                        var transResultJson=self.ParseTransData(r.responseText);
-                        h_onloadfn(transResultJson);
+                        setTimeout(function(){
+                            var transResultJson=self.ParseTransData(r.responseText);
+                            h_onloadfn(transResultJson);
+                        },300);
                     },
                     onerror:function(e){
                         console.error(e);
