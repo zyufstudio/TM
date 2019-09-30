@@ -36,6 +36,9 @@
             var s="";
             s+=StringFormat(".wordTrans{0}{background-color: rgb(245, 245, 245);box-sizing: content-box;cursor: pointer;z-index: 2147483647;border-width: 1px;border-style: solid;border-color: rgb(220, 220, 220);border-image: initial;border-radius: 5px;padding: 0.5px;position: absolute;display: none}",randomCode);
             s+=StringFormat(".wordTransIcon{0}{background-image: url({1});background-size: 25px;height: 25px;width: 25px;}",randomCode,transIconBase64);
+            s+=StringFormat("#panelBody{0}>div input,#panelBody{0}>div select{padding: 3px; margin: 0; background: #fff; font-size: 14px; border: 1px solid #a9a9a9; color:black; }",randomCode);
+            s+=StringFormat("#panelBody{0}>div:first-child{padding-bottom: 5px;height:30px}",randomCode);
+            s+=StringFormat("#panelBody{0}>div:last-child hr{border: 1px inset #eeeeee}",randomCode);
             GM_addStyle(s);
         }
         var ShowWordTransIcon=function(){
@@ -94,6 +97,9 @@
         var RegMenu=function(){
             GM_registerMenuCommand("文本翻译",function(){
                 var $body=$("html body");
+                $("div#wordTrans"+randomCode).hide();
+                Trans.Clear();
+                Panel.Destroy();
                 Trans.transEngine=defaultTransEngine;
                 TextTransPanel.Create($body);
             });
@@ -108,7 +114,7 @@
                     placement:placement,
                     trigger:"manual",
                     html: "true",
-                    template:StringFormat('<div data-id="transPanel{0}" class="transPanel popover" role="tooltip" style="max-width: 430px;min-width: 310px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',randomCode),
+                    template:StringFormat('<div data-id="transPanel{0}" class="transPanel popover" role="tooltip" style="max-width: 550px;min-width: 450px;"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',randomCode),
                     content: function () {
                         return StringFormat('<div id="panelBody{0}">{1}</div>',randomCode,content);
                     }
@@ -145,7 +151,7 @@
                     }
                 }
                 var wordTransPanelHtml=StringFormat(
-                    '<div style="padding-bottom: 5px;">翻译引擎：<select>{2}</select>    翻译语言：<input type="text" value="{4}" readonly style="width:80px"/> &#x21E8; <select>{3}</select></div>'+
+                    '<div>翻译引擎：<select>{2}</select>    翻译语言：<input type="text" value="{4}" readonly style="width:80px"/> &#x21E8; <select>{3}</select></div>'+
                     '<div style="word-wrap:break-word">{1}</div>'
                 ,randomCode,html.transHtml,transEngineOptionsHtml,html.langListHtml,html.origLangName);
                 
@@ -254,7 +260,7 @@
                 }
                 var TextTransPanelHtml=StringFormat('<div style="padding-bottom: 5px;">翻译引擎：<select>{2}</select>&nbsp;&nbsp;&nbsp;&nbsp;翻译语言：<select>{4}</select> &#x21E8; <select>{3}</select></div>'+
                     '<div style="word-wrap:break-word">'+
-                        '<div style="padding-bottom: 5px;"><input value="{5}" style="width:310px"/> <button>翻译</button></div><hr/>'+
+                        '<div style="padding-bottom: 5px;"><input value="{5}" style="width:310px"/> <button style="width:46px; height:26px; cursor: pointer;overflow: visible;color: inherit;margin: 0;padding: 1px 7px;background-color: #dddddd;border: 2px outset #dddddd;text-align: center;display: inline-block;font-size: 14px; font-weight: 400; ">翻译</button></div><hr/>'+
                         '<div style="padding-top: 5px;">{6}</div>'+
                     '</div>',randomCode,"",transEngineOptionsHtml,html.targetLangListHtml,html.origLangListHtml,"","");
                 Panel.popoverEl=popoverEl;
