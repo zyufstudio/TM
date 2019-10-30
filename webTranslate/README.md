@@ -10,6 +10,7 @@
 
 ### 待修改问题
 - Bootstrap网站组件栏目的按钮式下拉菜单点击按钮不能显示下拉菜单https://v3.bootcss.com/components/#btn-dropdowns
+- [Jqueryui](https://jqueryui.com/)网站下select元素不能显示下拉列表
 ### 适用网站
 - 所有网站
 
