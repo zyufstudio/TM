@@ -62,7 +62,7 @@
                     }
                     else{
                         //点击翻译图标，取消鼠标默认事件，防止选中的文本消失
-                        if(isWordTransIcon || isPanel){
+                        if(isWordTransIcon){
                             clearBubble(e);
                         }
                     }
