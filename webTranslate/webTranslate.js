@@ -38,7 +38,7 @@
             s+=StringFormat(".wordTransIcon{0}{background-image: url({1});background-size: 25px;height: 25px;width: 25px;}",randomCode,transIconBase64);
             s+=StringFormat("#panelBody{0}>div input,#panelBody{0}>div select{padding: 3px; margin: 0; background: #fff; font-size: 14px; border: 1px solid #a9a9a9; color:black; }",randomCode);
             s+=StringFormat("#panelBody{0}>div:first-child{padding-bottom: 5px;height:30px}",randomCode);
-            s+=StringFormat("#panelBody{0}>div:last-child hr{border: 1px inset #eeeeee}",randomCode);
+            s+=StringFormat("#panelBody{0}>div:last-child hr{border: 1px inset #eeeeee;background: none;height: 0px;margin: 0px;}",randomCode);
             GM_addStyle(s);
         }
         var ShowWordTransIcon=function(){
@@ -62,7 +62,7 @@
                     }
                     else{
                         //点击翻译图标，取消鼠标默认事件，防止选中的文本消失
-                        if(isWordTransIcon){
+                        if(isWordTransIcon || isPanel){
                             clearBubble(e);
                         }
                     }
