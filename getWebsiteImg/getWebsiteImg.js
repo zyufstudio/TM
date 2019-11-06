@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取网站所有图片
 // @namespace    https://www.chlung.com/
-// @version      0.4
+// @version      1.1.0
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
 // @match        *://*/*
@@ -231,28 +231,40 @@
                     close:function(){
                         $("div#imglst").jDialog("destroy");
                     },
-                    buttons:[
-                        {
-                            text:"全选",
-                            fn:function(t,e){
-                                var $el=$(t);
-                                var isAll=$el.attr("data-isall")||"Y";
-                                if(isAll=="Y"){
-                                    $(".JDialog-body ul.lst").find('.select-item').each(function(){
-                                        var $thisEl=$(this);
-                                        $thisEl.addClass("selected-item");
-                                    });
-                                    $el.text("全不选").attr("data-isall","N");
-                                }
-                                else{
-                                    $(".JDialog-body ul.lst").find('.select-item.selected-item').each(function(){
-                                        var $thisEl=$(this);
-                                        $thisEl.removeClass("selected-item");
-                                    });
-                                    $el.text("全选").attr("data-isall","Y");
-                                }
-                            }
+                    menus:[{
+                        text:"全选",   
+                        type:"sddmenu",    
+                        subMenus:[{         
+                            text:"全不选", 
+                            fn:function(){
+                                $(".JDialog-body ul.lst").find('.select-item.selected-item').each(function(){
+                                    var $thisEl=$(this);
+                                    $thisEl.removeClass("selected-item");
+                                });
+                            }        
                         },
+                        {
+                            text:"反选", 
+                            fn:function(){
+                                $(".JDialog-body ul.lst").find('.select-item').each(function(){
+                                    var $thisEl=$(this);
+                                    if($thisEl.is(".selected-item")){
+                                        $thisEl.removeClass("selected-item");
+                                    }
+                                    else{
+                                        $thisEl.addClass("selected-item");
+                                    }
+                                })
+                            }
+                        }],
+                        fn:function(){
+                            $(".JDialog-body ul.lst").find('.select-item').each(function(){
+                                var $thisEl=$(this);
+                                $thisEl.addClass("selected-item");
+                            })
+                        }
+                    }],
+                    buttons:[                      
                         {
                             text:"下载",
                             fn:function(){
