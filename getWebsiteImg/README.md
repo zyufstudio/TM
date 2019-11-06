@@ -12,6 +12,7 @@
 - 2019/9/2  v0.3	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复百度网页下无法弹出登录窗口，百度地图不能显示搜索列表，淘宝宝贝详情页不能显示价格
 - 2019/11/6 v0.4        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改对话框链接地址
 - 2019/11/6 v1.1.0    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改变全选按钮位置，并增加反选功能
+
 ### 适用网站
 - 所有网站
 
