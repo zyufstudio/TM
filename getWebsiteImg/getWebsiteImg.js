@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         获取网站所有图片
 // @namespace    https://www.chlung.com/
-// @version      0.3
+// @version      0.4
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
 // @match        *://*/*
@@ -11,7 +11,7 @@
 // @grant        GM_download
 // @connect      cdn.jsdelivr.net
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
-// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/build/jquery.jDialog.min.js
+// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/dist/jquery.jDialog.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jBoxSelect/build/jquery.jBoxSelect.min.js
 // ==/UserScript==
 
