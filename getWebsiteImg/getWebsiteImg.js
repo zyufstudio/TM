@@ -30,11 +30,10 @@
             $body.append(h.join(""));
         }
         var createStyle=function(){
-            //$('head').append('<link href="https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/build/jDialog.min.css" rel="stylesheet">');
             //尽可能避开csp认证
             GM_xmlhttpRequest({
                 method:"get",
-                url:"https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/build/jDialog.min.css",
+                url:"https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/dist/jDialog.min.css",
                 onload:function(r){
                     $("html head").append("<style>"+r.responseText+"</style>");
                 }
