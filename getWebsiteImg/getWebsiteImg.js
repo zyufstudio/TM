@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @namespace    https://www.chlung.com/
 // @version      1.1.0
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
