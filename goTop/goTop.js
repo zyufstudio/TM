@@ -4,6 +4,7 @@
 // @version      0.3
 // @description  在网页生成返回顶部按钮，点击按钮即可返回顶部。
 // @author       Johnny Li
+// @license      MIT
 // @match        *://*/*
 // @grant        GM_info
 // @require      http://code.jquery.com/jquery-1.11.0.min.js
