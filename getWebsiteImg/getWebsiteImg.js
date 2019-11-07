@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.1.0
+// @version      1.1.1
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
 // @license      MIT
