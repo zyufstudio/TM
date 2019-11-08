@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         网页翻译
+// @name         网页翻译助手
 // @version      1.1.0
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译。可以自行选择谷歌翻译和有道字典翻译。
