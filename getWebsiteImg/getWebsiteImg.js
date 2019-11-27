@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.1.3
+// @version      1.1.7
 // @namespace    https://github.com/zyufstudio/TM/tree/master/getWebsiteImg
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
@@ -46,6 +46,8 @@
             s+=".lst li .imageItemResolution{position: absolute;left:0px;bottom:0px;background: #16fd0061;font-size:small;text-align: center;line-height: normal;}";
             s+=".lst li.select-item.selecting-item, .lst li.select-item.selected-item, .lst li.select-item:hover { border: 3px solid #1094fa; box-shadow: #1094fa 0 0 8px 0}";
             s+=".lst li.select-item.unselecting-item{border: 3px solid #83b6ff; box-shadow: #83b6ff 0 0 8px 0}";
+            s+=".lst li.select-item.selected-item.success{border: 3px solid #00FF00; box-shadow: #00FF00 0 0 8px 0}"
+            s+=".lst li.select-item.selected-item.fail{border: 3px solid #FF0000; box-shadow: #FF0000 0 0 8px 0}"
             var style="<style>"+s+"</style>";
             $("html head").append(style);
         }
@@ -164,8 +166,29 @@
             catch(e){}
             return xhr.status >= 200 && xhr.status <= 299;
         }
+        var returnFiles=[];
         var downloadImg=function (index,imgs){
-            if(index>imgs.length-1) return;
+            if(index>imgs.length-1) {
+                var success=$.grep(returnFiles,function(item,index){
+                    return item.status==1;
+                });
+                var fail=$.grep(returnFiles,function(item,index){
+                    return item.status==0;
+                });
+                /*
+                var selectedItems=$(".JDialog-body ul.lst").find('.select-item.selected-item');
+                $.each(returnFiles,function(index,item){
+                    selectedItems.each(function(selectedIndex,selectedItem){
+                        var $selectedItem=$(selectedItem);
+                        if($selectedItem.is(StringFormat("[data-filename='{0}']",item.fileName))){
+                            $selectedItem.addClass(item.status==0?"fail":"success");
+                        }
+                    });
+                });
+                */
+                updateDownloadStatusBar(success.length,fail.length,"完成下载");
+                return;
+            }
             /*
             //不能下载不支持CORS的图片
             var image = new Image();
@@ -191,6 +214,7 @@
             var localdownload=imgs[index].localdownload;
             if(localdownload=="Y"){
                 GM_download(src,fileName);
+                returnFiles.push({fileName:fileName,status:1});
                 setTimeout(function(){
                     downloadImg(index + 1,imgs);
                 }, delayTime);
@@ -201,19 +225,21 @@
                     name:fileName,
                     onload:function(){
                         //downloadImg(index + 1,imgs);
+                        returnFiles.push({fileName:fileName,status:1});
                         setTimeout(function(){
                             downloadImg(index + 1,imgs);
                         }, delayTime);
                     },
                     onerror:function(e){
                         console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
+                        returnFiles.push({fileName:fileName,status:0});
                         setTimeout(function(){
                             downloadImg(index + 1,imgs);
                         }, delayTime);
-                        //console.log(errMsg);
                     },
                     ontimeout: function(){
-			    		console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
+                        console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
+                        returnFiles.push({fileName:fileName,status:0});
                         setTimeout(function(){
                             downloadImg(index + 1,imgs);
                         }, delayTime);
@@ -224,7 +250,7 @@
         var RegMenu=function(){
             GM_registerMenuCommand("获取图片",function(){
                 var h=GetAllImg();
-                $("div#imglst ul.lst").html(h+"<li class='clearFloat'></li>");
+                $("div#imglst ul.lst").html(h+"<li class='clearFloat' style='display:none'></li>");
                 $("div#imglst").jDialog({
                     title:"图片列表",
                     width:980,
@@ -238,10 +264,8 @@
                         subMenus:[{         
                             text:"全不选", 
                             fn:function(){
-                                $(".JDialog-body ul.lst").find('.select-item.selected-item').each(function(){
-                                    var $thisEl=$(this);
-                                    $thisEl.removeClass("selected-item");
-                                });
+                                $(".JDialog-body ul.lst").find('li.select-item.selected-item').removeClass("selected-item");
+                                updateSelectedStatusBar();
                             }        
                         },
                         {
@@ -255,16 +279,36 @@
                                     else{
                                         $thisEl.addClass("selected-item");
                                     }
-                                })
+                                });
+                                updateSelectedStatusBar();
                             }
                         }],
                         fn:function(){
-                            $(".JDialog-body ul.lst").find('.select-item').each(function(){
-                                var $thisEl=$(this);
-                                $thisEl.addClass("selected-item");
-                            })
+                            $(".JDialog-body ul.lst").find('li.select-item').addClass("selected-item");
+                            updateSelectedStatusBar();
                         }
                     }],
+                    statusBar:[{
+                            halign:"left",
+                            text:"共：{0=0}"
+                        },
+                        {
+                            halign:"left",
+                            text:"已选择：{0=0}"
+                        },
+                        {
+                            halign:"right",
+                            text:"成功：{0=0}"
+                        },
+                        {
+                            halign:"right",
+                            text:"失败：{0=0}"
+                        },
+                        {
+                            halign:"right",
+                            text:"等待下载"
+                        }
+                    ],
                     buttons:[                      
                         {
                             text:"下载",
@@ -282,14 +326,44 @@
                                         localdownload:localdownload
                                     });
                                 });
+                                returnFiles=[];
+                                updateDownloadStatusBar(0,0,"正在下载");
                                 downloadImg(0,imgs);
                             }
                         }
                     ]
                 });
                 $("div#imglst").jDialog("show");
-                $(".JDialog-body").JBoxSelect();
+                var imgTotal=$(".JDialog-body ul.lst").find('.select-item').length;
+                updateStatusbar(0,[imgTotal]);
+                $(".JDialog-body").JBoxSelect({
+                    selectedFn:function(){
+                        updateSelectedStatusBar();
+                    },
+                    unselectFn:function(){
+                        updateSelectedStatusBar();
+                    }
+                });
             });
+        }
+        var updateStatusbar=function(statusbarIndex,statusbarText){
+            if($.isArray(statusbarIndex))
+                $("div#imglst").jDialog("updateStatusBar",statusbarIndex);
+            else
+                $("div#imglst").jDialog("updateStatusBar",[{index:statusbarIndex,text:statusbarText}]);
+        }
+        var updateSelectedStatusBar=function(){
+            //$(".JDialog-body ul.lst").find('li.select-item').removeClass("success fail");
+            updateStatusbar(1,[$(".JDialog-body ul.lst").find('.select-item.selected-item').length+$(".JDialog-body ul.lst").find('.select-item.selecting-item').length]);
+            updateDownloadStatusBar(0,0,"等待下载");
+        }
+        var updateDownloadStatusBar=function(successTotal,failTotal,status){
+            var data=[
+                {index:2,text:[successTotal]},
+                {index:3,text:[failTotal]},
+                {index:4,text:[status]}
+            ]
+            updateStatusbar(data);
         }
         var ArrayUnique=function(args){
             var temparr=[];
