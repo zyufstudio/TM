@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.1.7
+// @version      1.1.8
 // @namespace    https://github.com/zyufstudio/TM/tree/master/getWebsiteImg
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
@@ -11,7 +11,11 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_download
 // @connect      cdn.jsdelivr.net
+// @connect      cdn.bootcss.com
+// @connect      *
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
+// @require      https://cdn.bootcss.com/jszip/3.2.2/jszip.min.js
+// @require      https://cdn.bootcss.com/FileSaver.js/1.3.8/FileSaver.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/dist/jquery.jDialog.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jBoxSelect/dist/jquery.jBoxSelect.min.js
 // ==/UserScript==
@@ -247,6 +251,68 @@
                 });
             }
         }
+        //打包下载
+        var ImgsZip = new JSZip();
+        var ImgsZipFolder = ImgsZip.folder('Images');
+        var downloadImgZip=function(index,imgs){
+            if(index>imgs.length-1) {
+                var success=$.grep(returnFiles,function(item,index){
+                    return item.status==1;
+                });
+                var fail=$.grep(returnFiles,function(item,index){
+                    return item.status==0;
+                });
+                updateDownloadStatusBar(success.length,fail.length,"完成下载");
+                if(success.length>0){
+                    ImgsZip.generateAsync({type:"blob"}).then(function (content) {           
+                        var ZipName="Images "+DateFormat(new Date(),"yyyy-MM-dd hh.mm.ss").toString()+".zip";
+                        saveAs(content, ZipName);
+                        ImgsZip.remove("Images");
+                    });
+                }
+                return;
+            }
+
+           var delayTime=300;
+            var src=imgs[index].src;
+            var fileName=imgs[index].fileName;
+            var localdownload=imgs[index].localdownload;
+            if(localdownload=="Y"){
+				ImgsZipFolder.file(fileName,src.split(",")[1],{base64: true});
+                returnFiles.push({fileName:fileName,status:1});
+                setTimeout(function(){
+                    downloadImgZip(index + 1,imgs);
+                }, delayTime);
+            }
+            else{
+                GM_xmlhttpRequest({
+                    method:"get",
+                    url:src,
+                    responseType:"blob",
+                    onload:function(r){
+                        ImgsZipFolder.file(fileName,r.response);
+                        returnFiles.push({fileName:fileName,status:1});
+                        setTimeout(function(){
+                            downloadImgZip(index + 1,imgs);
+                        }, delayTime);
+                    },
+                    onerror:function(e){
+                        console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
+                        returnFiles.push({fileName:fileName,status:0});
+                        setTimeout(function(){
+                            downloadImgZip(index + 1,imgs);
+                        }, delayTime);
+                    },
+                    ontimeout: function(){
+                        console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
+                        returnFiles.push({fileName:fileName,status:0});
+                        setTimeout(function(){
+                            downloadImgZip(index + 1,imgs);
+                        }, delayTime);
+			    	}
+                })
+            }
+        }
         var RegMenu=function(){
             GM_registerMenuCommand("获取图片",function(){
                 var h=GetAllImg();
@@ -309,7 +375,28 @@
                             text:"等待下载"
                         }
                     ],
-                    buttons:[                      
+                    buttons:[ 
+                        {
+                            text:"zip压缩下载",
+                            fn:function(){
+                                var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
+                                var imgs=[];
+                                imgLst.each(function(index,imgItem){
+                                    var $imgItem=$(imgItem);
+                                    var imgSrc=$imgItem.attr("data-src");
+                                    var localdownload=$imgItem.attr("data-localdownload");
+                                    var imgFileName=$imgItem.attr("data-filename");
+                                    imgs.push({
+                                        src:imgSrc,
+                                        fileName:imgFileName,
+                                        localdownload:localdownload
+                                    });
+                                });
+                                returnFiles=[];
+                                updateDownloadStatusBar(0,0,"正在下载");
+                                downloadImgZip(0,imgs);
+                            }
+                        },                     
                         {
                             text:"下载",
                             fn:function(){
@@ -381,6 +468,27 @@
                 return args[i+1];
             });
          }
+         var DateFormat=function(date,formatStr){
+            var o = {
+                "M+" : date.getMonth()+1,                 //月份
+                "d+" : date.getDate(),                    //日
+                "h+" : date.getHours(),                   //小时
+                "m+" : date.getMinutes(),                 //分
+                "s+" : date.getSeconds(),                 //秒
+                "q+" : Math.floor((date.getMonth()+3)/3), //季度
+                "S"  : date.getMilliseconds()             //毫秒
+              };
+              if(/(y+)/.test(formatStr)){
+                formatStr=formatStr.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+              }
+              for(var k in o){
+                if(new RegExp("("+ k +")").test(formatStr)){
+                  formatStr = formatStr.replace(
+                    RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+                }
+              }
+              return formatStr;
+        }
         this.init=function(){
             createStyle();
             createHtml();
