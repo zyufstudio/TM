@@ -170,8 +170,10 @@
             catch(e){}
             return xhr.status >= 200 && xhr.status <= 299;
         }
+        var ImgsZip = new JSZip();
+        var ImgsZipFolder = ImgsZip.folder('Images');
         var returnFiles=[];
-        var downloadImg=function (index,imgs){
+        var downloadImg=function (index,imgs,isZip){
             if(index>imgs.length-1) {
                 var success=$.grep(returnFiles,function(item,index){
                     return item.status==1;
@@ -191,6 +193,13 @@
                 });
                 */
                 updateDownloadStatusBar(success.length,fail.length,"完成下载");
+                if(isZip && success.length>0){
+                    ImgsZip.generateAsync({type:"blob"}).then(function (content) {           
+                        var ZipName="Images "+DateFormat(new Date(),"yyyy-MM-dd hh.mm.ss").toString()+".zip";
+                        saveAs(content, ZipName);
+                        ImgsZip.remove("Images");
+                    });
+                }
                 return;
             }
             /*
@@ -217,100 +226,72 @@
             var fileName=imgs[index].fileName;
             var localdownload=imgs[index].localdownload;
             if(localdownload=="Y"){
-                GM_download(src,fileName);
+                if(isZip){
+                    ImgsZipFolder.file(fileName,src.split(",")[1],{base64: true});
+                }
+                else{
+                    GM_download(src,fileName);
+                }
                 returnFiles.push({fileName:fileName,status:1});
                 setTimeout(function(){
-                    downloadImg(index + 1,imgs);
+                    downloadImg(index + 1,imgs,isZip);
                 }, delayTime);
             }
             else{
-                GM_download({
-                    url:src,
-                    name:fileName,
-                    onload:function(){
-                        //downloadImg(index + 1,imgs);
-                        returnFiles.push({fileName:fileName,status:1});
-                        setTimeout(function(){
-                            downloadImg(index + 1,imgs);
-                        }, delayTime);
-                    },
-                    onerror:function(e){
-                        console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
-                        returnFiles.push({fileName:fileName,status:0});
-                        setTimeout(function(){
-                            downloadImg(index + 1,imgs);
-                        }, delayTime);
-                    },
-                    ontimeout: function(){
-                        console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
-                        returnFiles.push({fileName:fileName,status:0});
-                        setTimeout(function(){
-                            downloadImg(index + 1,imgs);
-                        }, delayTime);
-			    	}
-                });
-            }
-        }
-        //打包下载
-        var ImgsZip = new JSZip();
-        var ImgsZipFolder = ImgsZip.folder('Images');
-        var downloadImgZip=function(index,imgs){
-            if(index>imgs.length-1) {
-                var success=$.grep(returnFiles,function(item,index){
-                    return item.status==1;
-                });
-                var fail=$.grep(returnFiles,function(item,index){
-                    return item.status==0;
-                });
-                updateDownloadStatusBar(success.length,fail.length,"完成下载");
-                if(success.length>0){
-                    ImgsZip.generateAsync({type:"blob"}).then(function (content) {           
-                        var ZipName="Images "+DateFormat(new Date(),"yyyy-MM-dd hh.mm.ss").toString()+".zip";
-                        saveAs(content, ZipName);
-                        ImgsZip.remove("Images");
+                if(isZip){
+                    GM_xmlhttpRequest({
+                        method:"get",
+                        url:src,
+                        responseType:"blob",
+                        onload:function(r){
+                            fnonload(r);
+                        },
+                        onerror:function(e){
+                            fnonerror(e);
+                        },
+                        ontimeout: function(){
+                            fnontimeout();
+                        }
+                    })
+                }
+                else{
+                    GM_download({
+                        url:src,
+                        name:fileName,
+                        onload:function(){
+                            fnonload();
+                        },
+                        onerror:function(e){
+                            fnonerror(e);
+                        },
+                        ontimeout: function(){
+                            fnontimeout();
+                        }
                     });
                 }
-                return;
-            }
-
-           var delayTime=300;
-            var src=imgs[index].src;
-            var fileName=imgs[index].fileName;
-            var localdownload=imgs[index].localdownload;
-            if(localdownload=="Y"){
-				ImgsZipFolder.file(fileName,src.split(",")[1],{base64: true});
-                returnFiles.push({fileName:fileName,status:1});
-                setTimeout(function(){
-                    downloadImgZip(index + 1,imgs);
-                }, delayTime);
-            }
-            else{
-                GM_xmlhttpRequest({
-                    method:"get",
-                    url:src,
-                    responseType:"blob",
-                    onload:function(r){
+                function fnonload(r){
+                    if(isZip){
                         ImgsZipFolder.file(fileName,r.response);
-                        returnFiles.push({fileName:fileName,status:1});
-                        setTimeout(function(){
-                            downloadImgZip(index + 1,imgs);
-                        }, delayTime);
-                    },
-                    onerror:function(e){
-                        console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
-                        returnFiles.push({fileName:fileName,status:0});
-                        setTimeout(function(){
-                            downloadImgZip(index + 1,imgs);
-                        }, delayTime);
-                    },
-                    ontimeout: function(){
-                        console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
-                        returnFiles.push({fileName:fileName,status:0});
-                        setTimeout(function(){
-                            downloadImgZip(index + 1,imgs);
-                        }, delayTime);
-			    	}
-                })
+                    }
+                    returnFiles.push({fileName:fileName,status:1});
+                    setTimeout(function(){
+                        downloadImg(index + 1,imgs,isZip);
+                    }, delayTime);
+                }
+                function fnonerror(e){
+                    console.error(StringFormat("第{0}几张图片{1}下载失败，失败原因：{2}",index+1,fileName,e.error));
+                    returnFiles.push({fileName:fileName,status:0});
+                    setTimeout(function(){
+                        downloadImg(index + 1,imgs,isZip);
+                    }, delayTime);
+                }
+                function fnontimeout(){
+                    console.error(StringFormat("第{0}几张图片{1}下载超时",index+1,fileName));
+                    returnFiles.push({fileName:fileName,status:0});
+                    setTimeout(function(){
+                        downloadImg(index + 1,imgs,isZip);
+                    }, delayTime);
+                }
             }
         }
         var RegMenu=function(){
@@ -379,43 +360,13 @@
                         {
                             text:"zip压缩下载",
                             fn:function(){
-                                var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
-                                var imgs=[];
-                                imgLst.each(function(index,imgItem){
-                                    var $imgItem=$(imgItem);
-                                    var imgSrc=$imgItem.attr("data-src");
-                                    var localdownload=$imgItem.attr("data-localdownload");
-                                    var imgFileName=$imgItem.attr("data-filename");
-                                    imgs.push({
-                                        src:imgSrc,
-                                        fileName:imgFileName,
-                                        localdownload:localdownload
-                                    });
-                                });
-                                returnFiles=[];
-                                updateDownloadStatusBar(0,0,"正在下载");
-                                downloadImgZip(0,imgs);
+                                fnDownloadImg(true);
                             }
                         },                     
                         {
                             text:"下载",
                             fn:function(){
-                                var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
-                                var imgs=[];
-                                imgLst.each(function(index,imgItem){
-                                    var $imgItem=$(imgItem);
-                                    var imgSrc=$imgItem.attr("data-src");
-                                    var localdownload=$imgItem.attr("data-localdownload");
-                                    var imgFileName=$imgItem.attr("data-filename");
-                                    imgs.push({
-                                        src:imgSrc,
-                                        fileName:imgFileName,
-                                        localdownload:localdownload
-                                    });
-                                });
-                                returnFiles=[];
-                                updateDownloadStatusBar(0,0,"正在下载");
-                                downloadImg(0,imgs);
+                                fnDownloadImg(false);
                             }
                         }
                     ]
@@ -431,6 +382,24 @@
                         updateSelectedStatusBar();
                     }
                 });
+                function fnDownloadImg(isZip){
+                    var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
+                    var imgs=[];
+                    imgLst.each(function(index,imgItem){
+                        var $imgItem=$(imgItem);
+                        var imgSrc=$imgItem.attr("data-src");
+                        var localdownload=$imgItem.attr("data-localdownload");
+                        var imgFileName=$imgItem.attr("data-filename");
+                        imgs.push({
+                            src:imgSrc,
+                            fileName:imgFileName,
+                            localdownload:localdownload
+                        });
+                    });
+                    returnFiles=[];
+                    updateDownloadStatusBar(0,0,"正在下载");
+                    downloadImg(0,imgs,isZip);
+                }
             });
         }
         var updateStatusbar=function(statusbarIndex,statusbarText){
