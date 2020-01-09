@@ -7,9 +7,8 @@
 - 支持中文简体，中文繁体，英文，日文，韩文，法文，西班牙文，德文，俄文等语言。
 
 ### 更新记录
-
-### 待修改问题
-- Bootstrap网站组件栏目的按钮式下拉菜单点击按钮不能显示下拉菜单https://v3.bootcss.com/components/#btn-dropdowns
+- 2020/1/8   v1.1.4     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重写面板
+- 2020/1/9   v1.1.5     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入Google整页翻译
 
 ### 适用网站
 - 所有网站
