@@ -117,7 +117,7 @@
             GM_registerMenuCommand("Google整页翻译",function(){
                 if(guid=="") 
                     guid=getGuid();
-                var cbscript=StringFormat('(function(){(function a(){var c=document.documentElement.lang;var e="{0}";var h="TE_"+e;var g="TECB_"+e;function b(){window.setTimeout(function(){window[h].showBanner(true)},10)}function d(){var i=new google.translate.TranslateElement({autoDisplay:false,floatPosition:0,multilanguagePage:true,pageLanguage:"auto"});return i}if(window[h]){b()}else{if(!window.google||!google.translate||!google.translate.TranslateElement){if(!window[g]){window[g]=function(){window[h]=d();b()}}var f=document.createElement("script");f.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(g)+"&client=tee";document.getElementsByTagName("head")[0].appendChild(f)}}})()})();',guid);
+                var cbscript=StringFormat('"use strict";!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
                 $head.append(StringFormat('<script>{0}</script>',cbscript));
             });
         }
