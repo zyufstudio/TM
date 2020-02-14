@@ -69,6 +69,21 @@
                     imgs.push($el.attr("src"));
                     return true;
                 }
+                if(elTagName=="SVG"){
+                    try {
+                        var svgBase64="data:image/svg+xml;base64," + btoa(el.outerHTML);
+                        var $svg_xml_box=$body.find("div#svg_xml_box");
+                        if($svg_xml_box.length<1){
+                            $body.append("<div id='svg_xml_box' style=''><ul></ul></div>");
+                        }
+                        $body.find("div#svg_xml_box ul").append(StringFormat("<li><img src='{0}'/></li>",svgBase64));
+                        imgs.push(svgBase64);
+                    } 
+                    catch (e) {}
+                    finally{
+                        return true;
+                    }
+                }
                 //canvas
                 if(elTagName=="CANVAS"){
                     imgs.push(el.toDataURL());
@@ -87,11 +102,12 @@
                 var width=imgObj.width;
                 var height=imgObj.height;
                 var naturalWH=imgObj.naturalWidth+"x"+imgObj.naturalHeight;
-                if(imgObj.naturalWidth<=15||imgObj.naturalHeight<=15) {return true;}
+                //console.log(StringFormat("src:{0} ,width:{1} ,height:{2} ,naturalWidth:{3} ,naturalHeight{4}",src,width,height,imgObj.naturalWidth,imgObj.naturalHeight));
+                //if(imgObj.naturalWidth<=15||imgObj.naturalHeight<=15) {return true;}
                 var imgResolution=StringFormat('<span class="imageItemResolution" style="width:{0}px;">{1}</span>',width,naturalWH);
                 imgResolution=height>=32&&width>=32?imgResolution:"";
                 var fe=GetFileExt(src);
-                var fileExt=fe.type!=""?fe.ext+"("+fe.type+")":fe.ext;
+                var fileExt=fe.type!=""?fe.fullExt+"("+fe.type+")":fe.fullExt;
                 var LocalDownload=fe.type!=""?"Y":"N";
                 var yellowBorder="";
                 var isSelect="select-item";
@@ -115,7 +131,8 @@
             if(imgBase64Reg.test(src)){
                 var imgBase64ExtReg=/^\s*data:([a-z]+\/)([a-z0-9-+.]+)/gim;
                 var s=imgBase64ExtReg.exec(src);
-                fileExt.ext=s[2];
+                fileExt.fullExt=s[2];
+                fileExt.ext=s[2].split("+")[0];
                 fileExt.type="base64";
             }
             else if(imgExtReg.test(src)){
@@ -138,11 +155,13 @@
             height=parseInt(image.height);
             naturalWidth=width;
             naturalHeight=height;
+            console.log(StringFormat("a_src:{0} ,width:{1} ,height:{2} ,naturalWidth:{3} ,naturalHeight{4}",src,width,height,naturalWidth,naturalHeight));
+
             outHeight=parseInt(outHeight);
             if(height<outHeight){
                 scaleWidth=width;
                 scaleHeight=height;
-            }else{
+            }else{ 
                 scaleWidth=parseInt(outHeight*width/height);
                 scaleHeight=outHeight;
             }
