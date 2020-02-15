@@ -17,6 +17,7 @@
 - 2019/11/27 v1.1.7     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加状态栏，状态栏查看图片数和下载状态等信息。
 - 2020/1/3   v1.1.8     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;增加zip压缩下载
 - 2020/2/15  v1.1.9     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加快捷键<kbd>Alt</kbd>+<kbd>P</kbd>获取图片
+- 2020/2/15  v1.2.0     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入斜线背景底纹
 
 ### 适用网站
 - 所有网站

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.1.9
+// @version      1.2.0
 // @namespace    https://github.com/zyufstudio/TM/tree/master/getWebsiteImg
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
