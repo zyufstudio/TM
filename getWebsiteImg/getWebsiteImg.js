@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.1.8
+// @version      1.1.9
 // @namespace    https://github.com/zyufstudio/TM/tree/master/getWebsiteImg
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
@@ -16,6 +16,7 @@
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
 // @require      https://cdn.bootcss.com/jszip/3.2.2/jszip.min.js
 // @require      https://cdn.bootcss.com/FileSaver.js/1.3.8/FileSaver.min.js
+// @require      https://cdn.jsdelivr.net/npm/hotkeys-js@3.7.2/dist/hotkeys.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/dist/jquery.jDialog.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jBoxSelect/dist/jquery.jBoxSelect.min.js
 // ==/UserScript==
@@ -295,112 +296,115 @@
             }
         }
         var RegMenu=function(){
-            GM_registerMenuCommand("获取图片",function(){
-                var h=GetAllImg();
-                $("div#imglst ul.lst").html(h+"<li class='clearFloat' style='display:none'></li>");
-                $("div#imglst").jDialog({
-                    title:"图片列表",
-                    width:980,
-                    height:610,
-                    close:function(){
-                        $("div#imglst").jDialog("destroy");
-                    },
-                    menus:[{
-                        text:"全选",   
-                        type:"sddmenu",    
-                        subMenus:[{         
-                            text:"全不选", 
-                            fn:function(){
-                                $(".JDialog-body ul.lst").find('li.select-item.selected-item').removeClass("selected-item");
-                                updateSelectedStatusBar();
-                            }        
-                        },
-                        {
-                            text:"反选", 
-                            fn:function(){
-                                $(".JDialog-body ul.lst").find('.select-item').each(function(){
-                                    var $thisEl=$(this);
-                                    if($thisEl.is(".selected-item")){
-                                        $thisEl.removeClass("selected-item");
-                                    }
-                                    else{
-                                        $thisEl.addClass("selected-item");
-                                    }
-                                });
-                                updateSelectedStatusBar();
-                            }
-                        }],
+            GM_registerMenuCommand("获取图片 (Alt+P)",function(){
+                ShowImg();
+            });
+        }
+        var ShowImg=function(){
+            var h=GetAllImg();
+            $("div#imglst ul.lst").html(h+"<li class='clearFloat' style='display:none'></li>");
+            $("div#imglst").jDialog({
+                title:"图片列表",
+                width:980,
+                height:610,
+                close:function(){
+                    $("div#imglst").jDialog("destroy");
+                },
+                menus:[{
+                    text:"全选",   
+                    type:"sddmenu",    
+                    subMenus:[{         
+                        text:"全不选", 
                         fn:function(){
-                            $(".JDialog-body ul.lst").find('li.select-item').addClass("selected-item");
+                            $(".JDialog-body ul.lst").find('li.select-item.selected-item').removeClass("selected-item");
+                            updateSelectedStatusBar();
+                        }        
+                    },
+                    {
+                        text:"反选", 
+                        fn:function(){
+                            $(".JDialog-body ul.lst").find('.select-item').each(function(){
+                                var $thisEl=$(this);
+                                if($thisEl.is(".selected-item")){
+                                    $thisEl.removeClass("selected-item");
+                                }
+                                else{
+                                    $thisEl.addClass("selected-item");
+                                }
+                            });
                             updateSelectedStatusBar();
                         }
                     }],
-                    statusBar:[{
-                            halign:"left",
-                            text:"共：{0=0}"
-                        },
-                        {
-                            halign:"left",
-                            text:"已选择：{0=0}"
-                        },
-                        {
-                            halign:"right",
-                            text:"成功：{0=0}"
-                        },
-                        {
-                            halign:"right",
-                            text:"失败：{0=0}"
-                        },
-                        {
-                            halign:"right",
-                            text:"等待下载"
-                        }
-                    ],
-                    buttons:[ 
-                        {
-                            text:"zip压缩下载",
-                            fn:function(){
-                                fnDownloadImg(true);
-                            }
-                        },                     
-                        {
-                            text:"下载",
-                            fn:function(){
-                                fnDownloadImg(false);
-                            }
-                        }
-                    ]
-                });
-                $("div#imglst").jDialog("show");
-                var imgTotal=$(".JDialog-body ul.lst").find('.select-item').length;
-                updateStatusbar(0,[imgTotal]);
-                $(".JDialog-body").JBoxSelect({
-                    selectedFn:function(){
-                        updateSelectedStatusBar();
-                    },
-                    unselectFn:function(){
+                    fn:function(){
+                        $(".JDialog-body ul.lst").find('li.select-item').addClass("selected-item");
                         updateSelectedStatusBar();
                     }
-                });
-                function fnDownloadImg(isZip){
-                    var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
-                    var imgs=[];
-                    imgLst.each(function(index,imgItem){
-                        var $imgItem=$(imgItem);
-                        var imgSrc=$imgItem.attr("data-src");
-                        var localdownload=$imgItem.attr("data-localdownload");
-                        var imgFileName=$imgItem.attr("data-filename");
-                        imgs.push({
-                            src:imgSrc,
-                            fileName:imgFileName,
-                            localdownload:localdownload
-                        });
-                    });
-                    returnFiles=[];
-                    updateDownloadStatusBar(0,0,"正在下载");
-                    downloadImg(0,imgs,isZip);
+                }],
+                statusBar:[{
+                        halign:"left",
+                        text:"共：{0=0}"
+                    },
+                    {
+                        halign:"left",
+                        text:"已选择：{0=0}"
+                    },
+                    {
+                        halign:"right",
+                        text:"成功：{0=0}"
+                    },
+                    {
+                        halign:"right",
+                        text:"失败：{0=0}"
+                    },
+                    {
+                        halign:"right",
+                        text:"等待下载"
+                    }
+                ],
+                buttons:[ 
+                    {
+                        text:"zip压缩下载",
+                        fn:function(){
+                            fnDownloadImg(true);
+                        }
+                    },                     
+                    {
+                        text:"下载",
+                        fn:function(){
+                            fnDownloadImg(false);
+                        }
+                    }
+                ]
+            });
+            $("div#imglst").jDialog("show");
+            var imgTotal=$(".JDialog-body ul.lst").find('.select-item').length;
+            updateStatusbar(0,[imgTotal]);
+            $(".JDialog-body").JBoxSelect({
+                selectedFn:function(){
+                    updateSelectedStatusBar();
+                },
+                unselectFn:function(){
+                    updateSelectedStatusBar();
                 }
             });
+            function fnDownloadImg(isZip){
+                var imgLst=$("div.JDialog-body ul.lst").find("li.select-item.selected-item");
+                var imgs=[];
+                imgLst.each(function(index,imgItem){
+                    var $imgItem=$(imgItem);
+                    var imgSrc=$imgItem.attr("data-src");
+                    var localdownload=$imgItem.attr("data-localdownload");
+                    var imgFileName=$imgItem.attr("data-filename");
+                    imgs.push({
+                        src:imgSrc,
+                        fileName:imgFileName,
+                        localdownload:localdownload
+                    });
+                });
+                returnFiles=[];
+                updateDownloadStatusBar(0,0,"正在下载");
+                downloadImg(0,imgs,isZip);
+            }
         }
         var updateStatusbar=function(statusbarIndex,statusbarText){
             if($.isArray(statusbarIndex))
@@ -462,6 +466,9 @@
             createStyle();
             createHtml();
             RegMenu();
+            hotkeys('alt+p', function() {
+                ShowImg();
+            });
         }
     }
     var gi=new GetImg();
