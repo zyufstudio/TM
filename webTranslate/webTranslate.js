@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.1.6
+// @version      1.1.8
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译和有道字典翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
@@ -11,6 +11,8 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
+// @grant        GM_setValue
+// @grant        GM_getValue
 // @connect      cdn.jsdelivr.net
 // @connect      cdn.bootcss.com
 // @connect      translate.google.cn
@@ -93,10 +95,11 @@
                 var selectText = selecter.toString().trim();
                 var rang = selecter.getRangeAt(0);
                 var temp = StringFormat('<span id="transText{0}">{1}</span>',randomCode,selectText);
+                var options=GetSettingOptions();
                 //rang.surroundContents($(temp)[0]);
                 Trans.transText=selectText;
                 Trans.transType="word";
-                Trans.transEngine=defaultTransEngine;
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                 Trans.transTargetLang=Trans.transEngine=="yd"?"ZH-CHS":Trans.transEngine=="ge"?"ZH-CN":"";
                 Trans.transOrigLang=Trans.transEngine=="yd"?"AUTO":Trans.transEngine=="ge"?"auto":"auto";
                 Trans.Execute(function(transResultJson){
@@ -109,9 +112,10 @@
             GM_registerMenuCommand("文本翻译",function(){
                 var $body=$("html body");
                 $("div#wordTrans"+randomCode).hide();
+                var options=GetSettingOptions();
                 Trans.Clear();
                 Panel.Destroy();
-                Trans.transEngine=defaultTransEngine;
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                 TextTransPanel.Create($body);
             });
             GM_registerMenuCommand("Google整页翻译",function(){
@@ -119,6 +123,9 @@
                     guid=getGuid();
                 var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
                 $head.append(StringFormat('<script>{0}</script>',cbscript));
+            });
+            GM_registerMenuCommand("设置",function(){
+                SettingPanel.Create($body);
             });
         }
         //面板
@@ -365,7 +372,7 @@
                 //源语言
                 for (var origKey in langList) {
                     if (langList.hasOwnProperty(origKey)) {
-                        var origVal = langList[origKey];
+                        var origVal = langList[origKey]; 
                         var origSelectOption="";
                         if(Trans.transOrigLang.toUpperCase()==origKey.toUpperCase()){
                             origSelectOption='selected="selected"';
@@ -385,6 +392,60 @@
                 returnHtml.targetLangListHtml=targetLangListHtml.join("");
                 returnHtml.transHtml=transHtml.join("");
                 return returnHtml;
+            }
+        }
+        //设置面板
+        var SettingPanel={
+            Create:function(popBoxEl){
+                var self=this;
+                var settingHtml=[];
+                settingHtml.push('<div style="padding-left: 15px;display: inline-block;">');
+                    settingHtml.push('<div style="padding-bottom: 30px; max-width: 600px;">');
+                        settingHtml.push('<div style="font-size: 14px; padding-bottom: 3px;">默认翻译引擎：</div>');
+                        settingHtml.push(StringFormat('<div style="padding-bottom: 3px; margin-left: 10px;"><label style="font-size: 14px; cursor: pointer;"><input type="radio" name="transEngine{0}" style="cursor: pointer;" value="yd">有道</label></div>',randomCode));
+                        settingHtml.push(StringFormat('<div style="padding-bottom: 0px; margin-left: 10px;"><label style="font-size: 14px; cursor: pointer;"><input type="radio" name="transEngine{0}" style="cursor: pointer;" value="ge">谷歌</label></div>',randomCode));
+                    settingHtml.push('</div>');
+
+                    settingHtml.push('<div>');
+                        settingHtml.push(StringFormat('<button id="saveBtn{0}">保存</button>',randomCode));
+                        settingHtml.push(StringFormat('<span id="saveStatus{0}" style="display:none;margin-left:10px;background-color: #fff1a8;padding: 3px;">设置已保存。</span>',randomCode));
+                    settingHtml.push('</div>');
+                settingHtml.push('</div>');
+
+                var settingHtmlStr=settingHtml.join("");
+                Panel.popBoxEl=popBoxEl;
+                Panel.Create("网页翻译助手设置","auto bottom",false,settingHtmlStr,function($panel){
+                    $panel.css({
+                        position: "fixed",
+                        top:"20px"
+                    });
+                    self.Update();
+                    //保存设置
+                    $panel.find(StringFormat("#panelBody{0} #saveBtn{0}",randomCode)).click(function(e){
+                        var defaultTransEngine=$panel.find(StringFormat("#panelBody{0} input[name='transEngine{0}']:checked",randomCode)).val();
+                        var options={
+                            //默认翻译引擎
+                            "defaulttransengine": defaultTransEngine
+                        }
+                        var optionsJson=JSON.stringify(options);
+                        GM_setValue("webtranslate-options", optionsJson);
+                        $panel.find(StringFormat("#panelBody{0} #saveStatus{0}",randomCode)).fadeIn(function(){
+                            setTimeout(function(){
+                                $panel.find(StringFormat("#panelBody{0} #saveStatus{0}",randomCode)).fadeOut();
+                            },1500);
+                        });
+                    });
+                });
+            },
+            Update:function(resultJson){
+                var self=this;
+                var optionsJson=GM_getValue("webtranslate-options")||"";
+                if(optionsJson!=""){
+                    var options=JSON.parse(optionsJson);
+                    Panel.Update(function($panel){
+                        $panel.find(StringFormat("#panelBody{0} input[name='transEngine{0}'][value='{1}']",randomCode,options.defaulttransengine)).prop("checked",true);
+                    });
+                }
             }
         }
         var Trans={
@@ -479,6 +540,17 @@
                 transResultJson.origLang=src;
                 return transResultJson;
             }
+        }
+        var GetSettingOptions=function(){
+            var options={
+                defaulttransengine:"yd"
+            }
+            var optionsJson=GM_getValue("webtranslate-options")||"";
+            if(optionsJson!=""){
+                var optionsData=JSON.parse(optionsJson);
+                options.defaulttransengine=optionsData.defaulttransengine;
+            }
+            return options;
         }
         var StringFormat=function(formatStr){
             var args=arguments;
