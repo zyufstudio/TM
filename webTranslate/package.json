@@ -1,0 +1,24 @@
+{
+  "name": "webtranslate",
+  "version": "1.1.9",
+  "description": "网页翻译助手",
+  "main": "webTranslate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c ./build/rollup.config.prod.js"
+  },
+  "author": "Johnny Li",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-rollup": "^2.17.0",
+    "rollup": "^2.1.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zyufstudio/TM/tree/master/webTranslate"
+  }
+}
