@@ -5,6 +5,8 @@ import {Trans} from "./trans"
 export var youdaoTrans = {
     code:"yd",
     codeText:"有道",
+    defaultOrigLang:"AUTO",         //默认源语言
+    defaultTargetLang:"ZH-CHS",     //默认目标语言
     langList: {"AUTO": "自动检测","zh-CHS": "中文","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
     Execute: function (h_onloadfn) {
         var h_url = "",

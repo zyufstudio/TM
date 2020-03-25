@@ -75,7 +75,7 @@ import {SettingPanel} from "./lib/settingPanel"
                 GetSettingOptions();
                 Trans.transText=selectText;
                 Trans.transType="word";
-                Trans.transEngine=options.defaulttransengine.value;//defaultTransEngine;
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                 Trans.Update();
                 Trans.Execute(function(){
                     WordTransPanel.Create($wordTransIcon,randomCode);
@@ -90,7 +90,7 @@ import {SettingPanel} from "./lib/settingPanel"
                 Trans.Clear();
                 Panel.Destroy();
                 GetSettingOptions();
-                Trans.transEngine=options.defaulttransengine.value;//defaultTransEngine;
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                 Trans.Update();
                 TextTransPanel.Create($body,randomCode);
             });
@@ -106,6 +106,7 @@ import {SettingPanel} from "./lib/settingPanel"
         }
         this.init=function(){
             randomCode=DateFormat(new Date(),"yyMM").toString()+(Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000).toString();
+            Trans.RegisterEngine();
             createStyle();
             createHtml();
             ShowWordTransIcon();

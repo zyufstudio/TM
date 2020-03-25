@@ -5,6 +5,8 @@ import {Trans} from "./trans"
 export var googleTrans = {
     code:"ge",
     codeText:"谷歌",
+    defaultOrigLang:"auto",         //默认源语言
+    defaultTargetLang:"zh-CN",      //默认目标语言
     langList: {"auto": "自动检测","zh-CN": "中文简体","zh-TW": "中文繁体","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
     Execute: function (h_onloadfn) {
         var h_url = "";

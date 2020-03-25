@@ -90,7 +90,7 @@
      */
     var options={
         //默认翻译引擎
-        defaulttransengine:{text:"默认翻译引擎",value:"yd"}
+        defaulttransengine:"yd"
     };
     /**
      * 获取配置参数
@@ -101,7 +101,7 @@
             var optionsData=JSON.parse(optionsJson);
             for (var key in options) {
                 if (options.hasOwnProperty(key) && optionsData.hasOwnProperty(key)) {
-                    options[key].value= optionsData[key].value;   
+                    options[key]= optionsData[key];   
                 }
             }
         }
@@ -119,6 +119,8 @@
     var googleTrans = {
         code:"ge",
         codeText:"谷歌",
+        defaultOrigLang:"auto",         //默认源语言
+        defaultTargetLang:"zh-CN",      //默认目标语言
         langList: {"auto": "自动检测","zh-CN": "中文简体","zh-TW": "中文繁体","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
         Execute: function (h_onloadfn) {
             var h_url = "";
@@ -155,6 +157,8 @@
     var youdaoTrans = {
         code:"yd",
         codeText:"有道",
+        defaultOrigLang:"AUTO",         //默认源语言
+        defaultTargetLang:"ZH-CHS",     //默认目标语言
         langList: {"AUTO": "自动检测","zh-CHS": "中文","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
         Execute: function (h_onloadfn) {
             var h_url = "",
@@ -212,8 +216,9 @@
     };
 
     var Trans={
-        transEngineList:{"ge":"谷歌","yd":"有道"},
+        transEngineList:{},         //翻译引擎实例列表
         transEngine:"",             //当前翻译引擎。ge(谷歌)/yd(有道)
+        transEngineObj:{},          //当前翻译引擎实例
         transTargetLang:"",         //目标语言。
         transOrigLang:"",           //源语言
         transType:"word",           //翻译类型。word(划词翻译)/text(输入文本翻译)/page(整页翻译)
@@ -230,44 +235,17 @@
             this.transResult.trans=[];
             this.transResult.orig=[];
             this.transResult.origLang="";
-
-            switch (this.transEngine) {
-                case "yd":
-                    youdaoTrans.Execute(h_onloadfn);
-                    break;
-                case "ge":
-                    googleTrans.Execute(h_onloadfn);
-            }
+            this.transEngineObj.Execute(h_onloadfn);
         },
         GetLangList:function(){
             var langList={};
-            switch (this.transEngine) {
-                case "yd":
-                    langList=youdaoTrans.langList;
-                    break;
-                case "ge":
-                    langList=googleTrans.langList;
-            }
+            langList=this.transEngineObj.langList;
             return langList;
         },
         Update:function(){
-            var transTargetLang,transOrigLang;
-            switch (this.transEngine) {
-                case "yd":
-                    transTargetLang="ZH-CHS";
-                    transOrigLang="AUTO";
-                    break;
-                case "ge":
-                    transTargetLang="ZH-CN";
-                    transOrigLang="auto";
-                    break;
-                default:
-                    transTargetLang="";
-                    transOrigLang="auto";
-                    break;
-            }
-            Trans.transTargetLang=transTargetLang;
-            Trans.transOrigLang=transOrigLang;
+            this.transEngineObj=this.transEngineList[this.transEngine];
+            Trans.transTargetLang=this.transEngineObj.defaultTargetLang;
+            Trans.transOrigLang=this.transEngineObj.defaultOrigLang;
         },
         Clear:function(){
             this.transEngine="",                //当前翻译引擎。ge(谷歌)/yd(有道)
@@ -278,11 +256,12 @@
             this.transResult.orig=[];
             this.transResult.origLang="";
         },
-        Init:function(){
+        //注册翻译引擎
+        RegisterEngine:function(){
             var transEngineListObj={};
-            transEngineListObj[googleTrans.code]=googleTrans.codeText;
-            transEngineListObj[youdaoTrans.code]=youdaoTrans.codeText;
-            this.transEngineListObj=transEngineListObj;
+            transEngineListObj[googleTrans.code]=googleTrans;
+            transEngineListObj[youdaoTrans.code]=youdaoTrans;
+            this.transEngineList=transEngineListObj;
         }
     };
 
@@ -334,7 +313,7 @@
             //翻译引擎
             for (var k in Trans.transEngineList) {
                 if (Trans.transEngineList.hasOwnProperty(k)) {
-                    var v = Trans.transEngineList[k];
+                    var v = Trans.transEngineList[k].codeText;
                     var selectOption="";
                     if(Trans.transEngine==k){
 
@@ -454,7 +433,7 @@
             var transEngineOptionsHtml="";
             for (var k in Trans.transEngineList) {
                 if (Trans.transEngineList.hasOwnProperty(k)) {
-                    var v = Trans.transEngineList[k];
+                    var v = Trans.transEngineList[k].codeText;
                     var selectOption="";
                     if(Trans.transEngine==k){
                         selectOption='selected="selected"';
@@ -546,16 +525,29 @@
 
     //设置面板
     var SettingPanel={
+        config:[{title:"",item:[{code:"",text:""}]}],
         Create:function(popBoxEl,randomCode){
             var self=this;
             var settingHtml=[];
+            this.InitConfig();
             settingHtml.push('<div style="padding-left: 15px;display: inline-block;">');
-
+                /*
                 settingHtml.push('<div style="padding-bottom: 30px; max-width: 600px;">');
                     settingHtml.push('<div style="font-size: 14px; padding-bottom: 3px;">默认翻译引擎：</div>');
                     settingHtml.push(StringFormat('<div style="padding-bottom: 3px; margin-left: 10px;"><label style="font-size: 14px; cursor: pointer;"><input type="radio" name="transEngine{0}" style="cursor: pointer;" value="yd">有道</label></div>',randomCode));
                     settingHtml.push(StringFormat('<div style="padding-bottom: 0px; margin-left: 10px;"><label style="font-size: 14px; cursor: pointer;"><input type="radio" name="transEngine{0}" style="cursor: pointer;" value="ge">谷歌</label></div>',randomCode));
                 settingHtml.push('</div>');
+                */
+                for (var index = 0; index < this.config.length; index++) {
+                    var configItem = this.config[index];
+                    settingHtml.push('<div style="padding-bottom: 30px; max-width: 600px;">');
+                    settingHtml.push(StringFormat('<div style="font-size: 14px; padding-bottom: 3px;">{0}</div>',configItem.title));
+                    for (var itemIndex = 0; itemIndex < configItem.item.length; itemIndex++) {
+                        var itemObj = configItem.item[itemIndex];
+                        settingHtml.push(StringFormat('<div style="padding-bottom: 0px; margin-left: 10px;"><label style="font-size: 14px; cursor: pointer;"><input type="radio" name="transEngine{0}" style="cursor: pointer;" value="{1}">{2}</label></div>',randomCode,itemObj.code,itemObj.text));
+                    }   
+                    settingHtml.push('</div>');
+                }
 
                 settingHtml.push('<div>');
                     settingHtml.push(StringFormat('<button id="saveBtn{0}">保存</button>',randomCode));
@@ -575,7 +567,7 @@
                 //保存设置
                 $panel.find(StringFormat("#panelBody{0} #saveBtn{0}",randomCode)).click(function(e){
                     var defaultTransEngine=$panel.find(StringFormat("#panelBody{0} input[name='transEngine{0}']:checked",randomCode)).val();
-                    options.defaulttransengine.value=defaultTransEngine;
+                    options.defaulttransengine=defaultTransEngine;
                     SetSettingOptions();
                     $panel.find(StringFormat("#panelBody{0} #saveStatus{0}",randomCode)).fadeIn(function(){
                         setTimeout(function(){
@@ -588,8 +580,21 @@
         Update:function(randomCode){
             GetSettingOptions();
             Panel.Update(function($panel){
-                $panel.find(StringFormat("#panelBody{0} input[name='transEngine{0}'][value='{1}']",randomCode,options.defaulttransengine.value)).prop("checked",true);
+                $panel.find(StringFormat("#panelBody{0} input[name='transEngine{0}'][value='{1}']",randomCode,options.defaulttransengine)).prop("checked",true);
             });
+        },
+        InitConfig:function(){
+            this.config=[];
+            var configObj={title:"",item:[{code:"",text:""}]};
+            configObj.title="默认翻译引擎：";
+            configObj.item=[];
+            for (var k in Trans.transEngineList) {
+                if (Trans.transEngineList.hasOwnProperty(k)) {
+                    var v = Trans.transEngineList[k].codeText;
+                    configObj.item.push({code:k,text:v});
+                }
+            }
+            this.config.push(configObj);
         }
     };
 
@@ -662,7 +667,7 @@
                     GetSettingOptions();
                     Trans.transText=selectText;
                     Trans.transType="word";
-                    Trans.transEngine=options.defaulttransengine.value;//defaultTransEngine;
+                    Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                     Trans.Update();
                     Trans.Execute(function(){
                         WordTransPanel.Create($wordTransIcon,randomCode);
@@ -677,7 +682,7 @@
                     Trans.Clear();
                     Panel.Destroy();
                     GetSettingOptions();
-                    Trans.transEngine=options.defaulttransengine.value;//defaultTransEngine;
+                    Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
                     Trans.Update();
                     TextTransPanel.Create($body,randomCode);
                 });
@@ -693,6 +698,7 @@
             };
             this.init=function(){
                 randomCode=DateFormat(new Date(),"yyMM").toString()+(Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000).toString();
+                Trans.RegisterEngine();
                 createStyle();
                 createHtml();
                 ShowWordTransIcon();

@@ -10,7 +10,7 @@ export var WordTransPanel={
         var transEngineOptionsHtml="";
         for (var k in Trans.transEngineList) {
             if (Trans.transEngineList.hasOwnProperty(k)) {
-                var v = Trans.transEngineList[k];
+                var v = Trans.transEngineList[k].codeText;
                 var selectOption="";
                 if(Trans.transEngine==k){
                     selectOption='selected="selected"';

@@ -1,9 +1,8 @@
 import {googleTrans}from "./googleTrans"
 import {youdaoTrans} from "./youdaoTrans"
-import {GetSettingOptions,options} from "../lib/utils"
 
 export var Trans={
-    transEngineList:{"ge":"谷歌","yd":"有道"},
+    transEngineList:{},         //翻译引擎实例列表
     transEngine:"",             //当前翻译引擎。ge(谷歌)/yd(有道)
     transEngineObj:{},          //当前翻译引擎实例
     transTargetLang:"",         //目标语言。
@@ -22,49 +21,17 @@ export var Trans={
         this.transResult.trans=[];
         this.transResult.orig=[];
         this.transResult.origLang="";
-
-        switch (this.transEngine) {
-            case "yd":
-                youdaoTrans.Execute(h_onloadfn);
-                break;
-            case "ge":
-                googleTrans.Execute(h_onloadfn);
-            default:
-                break;
-        }
+        this.transEngineObj.Execute(h_onloadfn);
     },
     GetLangList:function(){
         var langList={};
-        
-        switch (this.transEngine) {
-            case "yd":
-                langList=youdaoTrans.langList;
-                break;
-            case "ge":
-                langList=googleTrans.langList;
-            default:
-                break;
-        }
+        langList=this.transEngineObj.langList;
         return langList;
     },
     Update:function(){
-        var transTargetLang,transOrigLang;
-        switch (this.transEngine) {
-            case "yd":
-                transTargetLang="ZH-CHS";
-                transOrigLang="AUTO";
-                break;
-            case "ge":
-                transTargetLang="ZH-CN";
-                transOrigLang="auto";
-                break;
-            default:
-                transTargetLang="";
-                transOrigLang="auto";
-                break;
-        }
-        Trans.transTargetLang=transTargetLang;
-        Trans.transOrigLang=transOrigLang;
+        this.transEngineObj=this.transEngineList[this.transEngine];
+        Trans.transTargetLang=this.transEngineObj.defaultTargetLang;
+        Trans.transOrigLang=this.transEngineObj.defaultOrigLang;
     },
     Clear:function(){
         this.transEngine="",                //当前翻译引擎。ge(谷歌)/yd(有道)
@@ -75,18 +42,11 @@ export var Trans={
         this.transResult.orig=[];
         this.transResult.origLang="";
     },
-    Init:function(){
+    //注册翻译引擎
+    RegisterEngine:function(){
         var transEngineListObj={};
-        transEngineListObj[googleTrans.code]=googleTrans.codeText;
-        transEngineListObj[youdaoTrans.code]=youdaoTrans.codeText;
+        transEngineListObj[googleTrans.code]=googleTrans;
+        transEngineListObj[youdaoTrans.code]=youdaoTrans;
         this.transEngineList=transEngineListObj;
-
-        GetSettingOptions();
-        for (const key in this.transEngineList) {
-            if (this.transEngineList.hasOwnProperty(key) && key==options.defaulttransengine.value) {
-                const element = this.transEngineList[key];
-                
-            }
-        }
     }
 }

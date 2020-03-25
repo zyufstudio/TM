@@ -87,7 +87,7 @@ export function ClearBubble(e) {
  */
 export var options={
     //默认翻译引擎
-    defaulttransengine:{text:"默认翻译引擎",value:"yd"}
+    defaulttransengine:"yd"
 }
 /**
  * 获取配置参数
@@ -98,7 +98,7 @@ export function GetSettingOptions(){
         var optionsData=JSON.parse(optionsJson);
         for (var key in options) {
             if (options.hasOwnProperty(key) && optionsData.hasOwnProperty(key)) {
-                options[key].value= optionsData[key].value;   
+                options[key]= optionsData[key];   
             }
         }
     }
