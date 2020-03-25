@@ -42,8 +42,17 @@ export var Trans={
         this.transResult.orig=[];
         this.transResult.origLang="";
     },
-    //注册翻译引擎
+    //注册翻译引擎接口
     RegisterEngine:function(){
+        /**
+         * 翻译引擎必须提供以下接口
+            code:"",                    //代号
+            codeText:"",                //代号描述
+            defaultOrigLang:"",         //默认源语言
+            defaultTargetLang:"",       //默认目标语言
+            langList: {},               //支持翻译语言列表
+            Execute: function (h_onloadfn) {}   
+         */
         var transEngineListObj={};
         transEngineListObj[googleTrans.code]=googleTrans;
         transEngineListObj[youdaoTrans.code]=youdaoTrans;
