@@ -5,15 +5,18 @@
   "main": "webTranslate.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c ./build/rollup.config.prod.js"
+    "build": "node_modules/.bin/gulp -f ./build/build.js",
+    "dev": "node_modules/.bin/gulp -f ./build/dev.js"
   },
   "author": "Johnny Li",
   "license": "MIT",
   "devDependencies": {
+    "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^2.0.0",
     "gulp-rollup": "^2.17.0",
+    "gulp-sourcemaps": "^2.6.5",
     "rollup": "^2.1.0"
   },
   "dependencies": {},

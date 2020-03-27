@@ -21,3 +21,6 @@
 // @require      https://cdn.jsdelivr.net/npm/jquery.md5@1.0.2/index.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.min.js
 // ==/UserScript==
+
+
+//文件使用Rollup+Gulp编译，如需查看源码请转到GitHub项目。

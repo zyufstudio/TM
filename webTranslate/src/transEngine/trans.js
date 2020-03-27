@@ -30,8 +30,8 @@ export var Trans={
     },
     Update:function(){
         this.transEngineObj=this.transEngineList[this.transEngine];
-        Trans.transTargetLang=this.transEngineObj.defaultTargetLang;
-        Trans.transOrigLang=this.transEngineObj.defaultOrigLang;
+        this.transTargetLang=this.transEngineObj.defaultTargetLang;
+        this.transOrigLang=this.transEngineObj.defaultOrigLang;
     },
     Clear:function(){
         this.transEngine="",                //当前翻译引擎。ge(谷歌)/yd(有道)
