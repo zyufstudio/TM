@@ -15,7 +15,7 @@ export var youdaoTrans = {
 
         var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&version=2.1&doctype=json";
         var tempsalt = "" + (new Date).getTime() + parseInt(10 * Math.random(), 10);
-        var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + "n%A-rKaT5fb[Gy?;N5@Tj");
+        var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + "Nw(nmmbP%A-r6U3EUn]Aj");
         h_url = youdaoTransApi;
         h_headers = {
             "Content-Type": "application/x-www-form-urlencoded",
