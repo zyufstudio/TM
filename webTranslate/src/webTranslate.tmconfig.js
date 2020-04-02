@@ -24,4 +24,4 @@
 // ==/UserScript==
 
 
-//文件使用Rollup+Gulp编译，如需查看源码请转到GitHub项目。
+//文件使用Rollup+Gulp编译而成，如需查看源码请转到GitHub项目。

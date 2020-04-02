@@ -24,7 +24,7 @@
 // ==/UserScript==
 
 
-//文件使用Rollup+Gulp编译，如需查看源码请转到GitHub项目。
+//文件使用Rollup+Gulp编译而成，如需查看源码请转到GitHub项目。
 
 (function () {
     'use strict';
@@ -195,6 +195,7 @@
         defaultTargetLang:"ZH-CHS",     //默认目标语言
         langList: {"AUTO": "自动检测","zh-CHS": "中文","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
         Execute: function (h_onloadfn) {
+            console.log("ydexec: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
             var h_url = "",
                 h_headers = {},
                 h_data = "";
@@ -249,8 +250,6 @@
         },
     };
 
-    var i = null;
-
     function a(r) {
       if (Array.isArray(r)) {
         for (var o = 0, t = Array(r.length); o < r.length; o++)
@@ -271,6 +270,7 @@
     }
 
     function e(r,gtk) {
+      var i = null;
       var o = r.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g);
       if (null === o) {
         var t = r.length;
@@ -454,6 +454,7 @@
             this.transResult.trans=[];
             this.transResult.orig=[];
             this.transResult.origLang="";
+            console.log(this.transEngine+" ,this.Trans.exec: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
             this.transEngineObj.Execute(h_onloadfn);
         },
         GetLangList:function(){
@@ -462,9 +463,13 @@
             return langList;
         },
         Update:function(){
+            this.transResult.trans=[];
+            this.transResult.orig=[];
+            this.transResult.origLang="";
             this.transEngineObj=this.transEngineList[this.transEngine];
             this.transTargetLang=this.transEngineObj.defaultTargetLang;
             this.transOrigLang=this.transEngineObj.defaultOrigLang;
+            console.log(this.transEngine+" ,this.Trans.Update: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
         },
         Clear:function(){
             this.transEngine="",                //当前翻译引擎。ge(谷歌)/yd(有道)
@@ -557,9 +562,13 @@
                     transEngineOptionsHtml+=StringFormat('<option value="{0}" {2}>{1}</option>',k,v,selectOption);
                 }
             }
-            var TextTransPanelHtml=StringFormat('<div style="padding-bottom: 5px;">翻译引擎：<select>{2}</select>&nbsp;&nbsp;&nbsp;&nbsp;翻译语言：<select>{4}</select> &#x21E8; <select>{3}</select></div>'+
+            var TextTransPanelHtml=StringFormat('<div style="padding-bottom: 5px;">'+
+                '翻译引擎：<select>{2}</select>&nbsp;&nbsp;&nbsp;&nbsp;'+
+                '翻译语言：<select>{4}</select> &#x21E8; '+
+                '<select>{3}</select> '+
+                '<button style="width:46px; height:26px; cursor: pointer;overflow: visible;color: inherit;margin: 0;padding: 1px 7px;background-color: #dddddd;border: 2px outset #dddddd;text-align: center;display: inline-block;font-size: 14px; font-weight: 400; ">翻译</button></div>'+
                 '<div style="word-wrap:break-word">'+
-                    '<div style="padding-bottom: 5px;"><input value="{5}" style="width:310px"/> <button style="width:46px; height:26px; cursor: pointer;overflow: visible;color: inherit;margin: 0;padding: 1px 7px;background-color: #dddddd;border: 2px outset #dddddd;text-align: center;display: inline-block;font-size: 14px; font-weight: 400; ">翻译</button></div><hr/>'+
+                    '<div style="padding-bottom: 5px;"><textarea placeholder="请输入你要翻译的文字" style="word-wrap: break-word;word-break: keep-all;overflow-y: auto;width:450px;height:85px;padding: 3px;line-height: 18px;font-size: 14px;font-family: arial,simsun;border: 1px solid #999;border-color: #999 #d8d8d8 #d8d8d8 #999;outline: 0;resize: none;">{5}</textarea></div><hr/>'+
                     '<div style="padding-top: 5px;">{6}</div>'+
                 '</div>',randomCode,"",transEngineOptionsHtml,html.targetLangListHtml,html.origLangListHtml,"","");
             Panel.popBoxEl=popBoxEl;
@@ -575,6 +584,9 @@
                     Trans.Update();
                     Panel.Update(function($panel){
                         var html=self.GetHtml();
+                        console.log("text Engine: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
+                        //翻译内容
+                        $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(1)",randomCode)).html("");
                         $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).html(html.origLangListHtml);
                         $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(2)",randomCode)).html(html.targetLangListHtml);
                     });
@@ -592,13 +604,14 @@
                     Trans.transTargetLang=$(this).find("option:selected").val();
                 });
                 //翻译
-                $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) button:eq(0)",randomCode)).click(function(e){
-                    var refTransText=$.trim($panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) input:eq(0)",randomCode)).val());
+                $panel.find(StringFormat("#panelBody{0} div:eq(0)  button:eq(0)",randomCode)).click(function(e){
+                    var refTransText=$.trim($panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) textarea:eq(0)",randomCode)).val());
                     if(refTransText==""){
-                        alert("请输入翻译内容!");
+                        alert("请输入翻译文字!");
                         return;
                     }
                     Trans.transText=refTransText;
+                    console.log("text Trans: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                     Trans.Execute(function(){
                         Panel.Update(function($panel){
                             var html=self.GetHtml();
@@ -833,114 +846,115 @@
         }
     };
 
-    var $$1 = $$1 || window.$;
-        var WebTranslate=function(){
-            var transIconBase64="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==";
-            var $doc=$$1(document);
-            var $body=$$1("html body");
-            var $head=$$1("html head");
-            var randomCode="yyMM000000";    //属性随机码，年月加六位随机码。用于元素属性后缀，以防止属性名称重复。
-            var createHtml=function(){
-                var wordTransIconHtml=StringFormat('<div id="wordTrans{0}" class="wordTrans{0}"><div class="wordTransIcon{0}"></div></div>',randomCode,transIconBase64);
-                $body.append(StringFormat('<div id="webTrans{0}">',randomCode)+wordTransIconHtml+'</div>');
-            };
-            var createStyle=function(){
-                //尽可能避开csp认证
-                GM_xmlhttpRequest({
-                    method:"get",
-                    url:"https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.min.css",
-                    onload:function(r){
-                        GM_addStyle(r.responseText+".JPopBox-tip-white{max-width: 550px;min-width: 450px;}");
-                    }
-                });
-                var s="";
-                s+=StringFormat(".wordTrans{0}{background-color: rgb(245, 245, 245);box-sizing: content-box;cursor: pointer;z-index: 2147483647;border-width: 1px;border-style: solid;border-color: rgb(220, 220, 220);border-image: initial;border-radius: 5px;padding: 0.5px;position: absolute;display: none}",randomCode);
-                s+=StringFormat(".wordTransIcon{0}{background-image: url({1});background-size: 25px;height: 25px;width: 25px;}",randomCode,transIconBase64);
-                s+=Panel.CreateStyle();
-                GM_addStyle(s);
-            };
-            var ShowWordTransIcon=function(){
-                var $wordTransIcon=$$1("div#wordTrans"+randomCode);
-                var isSelect=false;
-                var isPanel=false;
-                var isWordTransIcon=false;
-                $doc.on({
-                    "selectionchange":function(e){
-                        isSelect=true;
-                    },
-                    "mousedown":function(e){
-                        var $targetEl=$$1(e.target);
-                        isPanel=$targetEl.parents().is("div.JPopBox-tip-white");
-                        isWordTransIcon=$targetEl.parents().is(StringFormat("div#wordTrans{0}",randomCode));
-                        //点击翻译图标外域和翻译面板外域时，隐藏图标和翻译面板
-                        if(!isWordTransIcon && !isPanel){
-                            $wordTransIcon.hide();
-                            Trans.Clear();
-                            Panel.Destroy();
-                        }
-                        else {
-                            //点击翻译图标，取消鼠标默认事件，防止选中的文本消失
-                            if(isWordTransIcon){
-                                ClearBubble(e);
-                            }
-                        }
-                    },
-                    "mouseup":function(e){
-                        var selectText = window.getSelection().toString().trim();
-                        if(!isPanel&&isSelect&&selectText){
-                            $wordTransIcon.show().css({
-                                left: e.pageX + 'px',
-                                top : e.pageY + 12 + 'px'
-                            });
-                            isSelect=false;
-                        }
-                    }
-                });
-                $wordTransIcon.click(function(e){
-                    var selecter=window.getSelection();
-                    var selectText = selecter.toString().trim();
-                    GetSettingOptions();
-                    Trans.transText=selectText;
-                    Trans.transType="word";
-                    Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
-                    Trans.Update();
-                    Trans.Execute(function(){
-                        WordTransPanel.Create($wordTransIcon,randomCode);
-                    });
-                });
-            };
-            var guid="";
-            var RegMenu=function(){
-                GM_registerMenuCommand("文本翻译",function(){
-                    var $body=$$1("html body");
-                    $$1("div#wordTrans"+randomCode).hide();
-                    Trans.Clear();
-                    Panel.Destroy();
-                    GetSettingOptions();
-                    Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
-                    Trans.Update();
-                    TextTransPanel.Create($body,randomCode);
-                });
-                GM_registerMenuCommand("Google整页翻译",function(){
-                    if(guid=="") 
-                        guid=Guid();
-                    var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
-                    $head.append(StringFormat('<script>{0}</script>',cbscript));
-                });
-                GM_registerMenuCommand("设置",function(){
-                    SettingPanel.Create($body,randomCode);
-                });
-            };
-            this.init=function(){
-                randomCode=DateFormat(new Date(),"yyMM").toString()+(Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000).toString();
-                Trans.RegisterEngine();
-                createStyle();
-                createHtml();
-                ShowWordTransIcon();
-                RegMenu();
-            };
+    //主程序
+    var WebTranslate=function(){
+        var transIconBase64="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==";
+        var $doc=$(document);
+        var $body=$("html body");
+        var $head=$("html head");
+        var randomCode="yyMM000000";    //属性随机码，年月加六位随机码。用于元素属性后缀，以防止属性名称重复。
+        var createHtml=function(){
+            var wordTransIconHtml=StringFormat('<div id="wordTrans{0}" class="wordTrans{0}"><div class="wordTransIcon{0}"></div></div>',randomCode,transIconBase64);
+            $body.append(StringFormat('<div id="webTrans{0}">',randomCode)+wordTransIconHtml+'</div>');
         };
-        var webTrans=new WebTranslate();
-        webTrans.init();
+        var createStyle=function(){
+            //尽可能避开csp认证
+            GM_xmlhttpRequest({
+                method:"get",
+                url:"https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.min.css",
+                onload:function(r){
+                    GM_addStyle(r.responseText+".JPopBox-tip-white{width: 482px;max-width: 550px;min-width: 450px;}");
+                }
+            });
+            var s="";
+            s+=StringFormat(".wordTrans{0}{background-color: rgb(245, 245, 245);box-sizing: content-box;cursor: pointer;z-index: 2147483647;border-width: 1px;border-style: solid;border-color: rgb(220, 220, 220);border-image: initial;border-radius: 5px;padding: 0.5px;position: absolute;display: none}",randomCode);
+            s+=StringFormat(".wordTransIcon{0}{background-image: url({1});background-size: 25px;height: 25px;width: 25px;}",randomCode,transIconBase64);
+            s+=Panel.CreateStyle();
+            GM_addStyle(s);
+        };
+        var ShowWordTransIcon=function(){
+            var $wordTransIcon=$("div#wordTrans"+randomCode);
+            var isSelect=false;
+            var isPanel=false;
+            var isWordTransIcon=false;
+            $doc.on({
+                "selectionchange":function(e){
+                    isSelect=true;
+                },
+                "mousedown":function(e){
+                    var $targetEl=$(e.target);
+                    isPanel=$targetEl.parents().is("div.JPopBox-tip-white");
+                    isWordTransIcon=$targetEl.parents().is(StringFormat("div#wordTrans{0}",randomCode));
+                    //点击翻译图标外域和翻译面板外域时，隐藏图标和翻译面板
+                    if(!isWordTransIcon && !isPanel){
+                        $wordTransIcon.hide();
+                        Trans.Clear();
+                        Panel.Destroy();
+                    }
+                    else {
+                        //点击翻译图标，取消鼠标默认事件，防止选中的文本消失
+                        if(isWordTransIcon){
+                            ClearBubble(e);
+                        }
+                    }
+                },
+                "mouseup":function(e){
+                    var selectText = window.getSelection().toString().trim();
+                    if(!isPanel&&isSelect&&selectText){
+                        $wordTransIcon.show().css({
+                            left: e.pageX + 'px',
+                            top : e.pageY + 12 + 'px'
+                        });
+                        isSelect=false;
+                    }
+                }
+            });
+            $wordTransIcon.click(function(e){
+                var selecter=window.getSelection();
+                var selectText = selecter.toString().trim();
+                GetSettingOptions();
+                Trans.transText=selectText;
+                Trans.transType="word";
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
+                Trans.Update();
+                Trans.Execute(function(){
+                    WordTransPanel.Create($wordTransIcon,randomCode);
+                    $wordTransIcon.hide();
+                });
+            });
+        };
+        var guid="";
+        var RegMenu=function(){
+            GM_registerMenuCommand("文本翻译",function(){
+                var $body=$("html body");
+                $("div#wordTrans"+randomCode).hide();
+                Trans.Clear();
+                Panel.Destroy();
+                GetSettingOptions();
+                Trans.transEngine=options.defaulttransengine;//defaultTransEngine;
+                Trans.Update();
+                TextTransPanel.Create($body,randomCode);
+            });
+            GM_registerMenuCommand("Google整页翻译",function(){
+                if(guid=="") 
+                    guid=Guid();
+                var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
+                $head.append(StringFormat('<script>{0}</script>',cbscript));
+            });
+            GM_registerMenuCommand("设置",function(){
+                SettingPanel.Create($body,randomCode);
+            });
+        };
+        this.init=function(){
+            randomCode=DateFormat(new Date(),"yyMM").toString()+(Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000).toString();
+            Trans.RegisterEngine();
+            createStyle();
+            createHtml();
+            ShowWordTransIcon();
+            RegMenu();
+        };
+    };
+    var webTrans=new WebTranslate();
+    webTrans.init();
 
 }());

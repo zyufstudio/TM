@@ -20,9 +20,13 @@ export var TextTransPanel={
                 transEngineOptionsHtml+=StringFormat('<option value="{0}" {2}>{1}</option>',k,v,selectOption);
             }
         }
-        var TextTransPanelHtml=StringFormat('<div style="padding-bottom: 5px;">翻译引擎：<select>{2}</select>&nbsp;&nbsp;&nbsp;&nbsp;翻译语言：<select>{4}</select> &#x21E8; <select>{3}</select></div>'+
+        var TextTransPanelHtml=StringFormat('<div style="padding-bottom: 5px;">'+
+            '翻译引擎：<select>{2}</select>&nbsp;&nbsp;&nbsp;&nbsp;'+
+            '翻译语言：<select>{4}</select> &#x21E8; '+
+            '<select>{3}</select> '+
+            '<button style="width:46px; height:26px; cursor: pointer;overflow: visible;color: inherit;margin: 0;padding: 1px 7px;background-color: #dddddd;border: 2px outset #dddddd;text-align: center;display: inline-block;font-size: 14px; font-weight: 400; ">翻译</button></div>'+
             '<div style="word-wrap:break-word">'+
-                '<div style="padding-bottom: 5px;"><input value="{5}" style="width:310px"/> <button style="width:46px; height:26px; cursor: pointer;overflow: visible;color: inherit;margin: 0;padding: 1px 7px;background-color: #dddddd;border: 2px outset #dddddd;text-align: center;display: inline-block;font-size: 14px; font-weight: 400; ">翻译</button></div><hr/>'+
+                '<div style="padding-bottom: 5px;"><textarea placeholder="请输入你要翻译的文字" style="word-wrap: break-word;word-break: keep-all;overflow-y: auto;width:450px;height:85px;padding: 3px;line-height: 18px;font-size: 14px;font-family: arial,simsun;border: 1px solid #999;border-color: #999 #d8d8d8 #d8d8d8 #999;outline: 0;resize: none;">{5}</textarea></div><hr/>'+
                 '<div style="padding-top: 5px;">{6}</div>'+
             '</div>',randomCode,"",transEngineOptionsHtml,html.targetLangListHtml,html.origLangListHtml,"","");
         Panel.popBoxEl=popBoxEl;
@@ -38,6 +42,9 @@ export var TextTransPanel={
                 Trans.Update();
                 Panel.Update(function($panel){
                     var html=self.GetHtml();
+                    console.log("text Engine: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
+                    //翻译内容
+                    $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(1)",randomCode)).html("");
                     $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).html(html.origLangListHtml);
                     $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(2)",randomCode)).html(html.targetLangListHtml);
                 });
@@ -55,13 +62,14 @@ export var TextTransPanel={
                 Trans.transTargetLang=$(this).find("option:selected").val();
             });
             //翻译
-            $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) button:eq(0)",randomCode)).click(function(e){
-                var refTransText=$.trim($panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) input:eq(0)",randomCode)).val());
+            $panel.find(StringFormat("#panelBody{0} div:eq(0)  button:eq(0)",randomCode)).click(function(e){
+                var refTransText=$.trim($panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(0) textarea:eq(0)",randomCode)).val());
                 if(refTransText==""){
-                    alert("请输入翻译内容!");
+                    alert("请输入翻译文字!");
                     return;
                 }
                 Trans.transText=refTransText;
+                console.log("text Trans: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                 Trans.Execute(function(){
                     Panel.Update(function($panel){
                         var html=self.GetHtml();

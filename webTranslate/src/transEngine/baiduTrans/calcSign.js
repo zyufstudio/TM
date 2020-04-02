@@ -1,5 +1,3 @@
-var i = null;
-
 function a(r) {
   if (Array.isArray(r)) {
     for (var o = 0, t = Array(r.length); o < r.length; o++)
@@ -20,6 +18,7 @@ function n(r, o) {
 }
 
 function e(r,gtk) {
+  var i = null;
   var o = r.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g);
   if (null === o) {
     var t = r.length;
