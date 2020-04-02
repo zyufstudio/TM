@@ -308,7 +308,7 @@
      * @param  {string} gtk
      * @return {string}
      */
-    var calcSign = (word, gtk) => {
+    var calcSign =function(word,gtk){
       return e(word,gtk);
     };
 
@@ -497,7 +497,7 @@
             transEngineListObj[youdaoTrans.code]=youdaoTrans;
             transEngineListObj[baiduTrans.code]=baiduTrans;
             this.transEngineList=transEngineListObj;
-            for (const key in this.transEngineList) {
+            for (var key in this.transEngineList) {
                 if (this.transEngineList.hasOwnProperty(key) && this.transEngineList[key].hasOwnProperty("init")) {
                     this.transEngineList[key].init();
                 }

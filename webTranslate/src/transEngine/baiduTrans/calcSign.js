@@ -56,7 +56,7 @@ function e(r,gtk) {
  * @param  {string} gtk
  * @return {string}
  */
-var calcSign = (word, gtk) => {
+var calcSign =function(word,gtk){
   return e(word,gtk);
 }
 export default calcSign
