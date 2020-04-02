@@ -1,5 +1,6 @@
 import {googleTrans}from "./googleTrans"
 import {youdaoTrans} from "./youdaoTrans"
+import {baiduTrans} from "./baiduTrans/baiduTrans"
 
 export var Trans={
     transEngineList:{},         //翻译引擎实例列表
@@ -42,7 +43,7 @@ export var Trans={
         this.transResult.orig=[];
         this.transResult.origLang="";
     },
-    //注册翻译引擎接口
+    //注册翻译引擎接口并执行翻译引擎的初始化接口
     RegisterEngine:function(){
         /**
          * 翻译引擎必须提供以下接口
@@ -51,11 +52,18 @@ export var Trans={
             defaultOrigLang:"",         //默认源语言
             defaultTargetLang:"",       //默认目标语言
             langList: {},               //支持翻译语言列表
-            Execute: function (h_onloadfn) {}   
+            Execute: function (h_onloadfn) {},     //执行翻译
+            init:function(){},          //可选，初始化接口，在脚本创建时立即执行
          */
         var transEngineListObj={};
         transEngineListObj[googleTrans.code]=googleTrans;
         transEngineListObj[youdaoTrans.code]=youdaoTrans;
+        transEngineListObj[baiduTrans.code]=baiduTrans;
         this.transEngineList=transEngineListObj;
+        for (const key in this.transEngineList) {
+            if (this.transEngineList.hasOwnProperty(key) && this.transEngineList[key].hasOwnProperty("init")) {
+                this.transEngineList[key].init();
+            }
+        }
     }
 }

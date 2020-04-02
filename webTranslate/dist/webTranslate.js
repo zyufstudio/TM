@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.1.9
+// @version      1.2.0
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
-// @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译和有道字典翻译。
+// @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译,有道字典翻译和百度翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
 // @author       Johnny Li
 // @license      MIT
@@ -17,6 +17,7 @@
 // @connect      cdn.bootcss.com
 // @connect      translate.google.cn
 // @connect      fanyi.youdao.com
+// @connect      fanyi.baidu.com
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery.md5@1.0.2/index.min.js
 // @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.min.js
@@ -111,6 +112,12 @@
             e.returnValue = false;
         }
     }
+    function ObjectToQueryString(object){
+        var querystring=Object.keys(object).map(function(key) { 
+            return encodeURIComponent(key) + '=' + encodeURIComponent(object[key]) 
+        }).join('&');
+        return querystring;
+    }
 
     /**
      * 配置参数
@@ -194,7 +201,7 @@
 
             var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&version=2.1&doctype=json";
             var tempsalt = "" + (new Date).getTime() + parseInt(10 * Math.random(), 10);
-            var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + "n%A-rKaT5fb[Gy?;N5@Tj");
+            var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + "Nw(nmmbP%A-r6U3EUn]Aj");
             h_url = youdaoTransApi;
             h_headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -242,6 +249,191 @@
         },
     };
 
+    var i = null;
+
+    function a(r) {
+      if (Array.isArray(r)) {
+        for (var o = 0, t = Array(r.length); o < r.length; o++)
+          t[o] = r[o];
+        return t
+      }
+      return Array.from(r)
+    }
+
+    function n(r, o) {
+      for (var t = 0; t < o.length - 2; t += 3) {
+        var a = o.charAt(t + 2);
+        a = a >= "a" ? a.charCodeAt(0) - 87 : Number(a),
+        a = "+" === o.charAt(t + 1) ? r >>> a : r << a,
+        r = "+" === o.charAt(t) ? r + a & 4294967295 : r ^ a;
+      }
+      return r
+    }
+
+    function e(r,gtk) {
+      var o = r.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g);
+      if (null === o) {
+        var t = r.length;
+        t > 30 && (r = "" + r.substr(0, 10) + r.substr(Math.floor(t / 2) - 5, 10) + r.substr(-10, 10));
+      } else {
+        for (var e = r.split(/[\uD800-\uDBFF][\uDC00-\uDFFF]/), C = 0, h = e.length, f = []; h > C; C++)
+          "" !== e[C] && f.push.apply(f, a(e[C].split(""))),
+          C !== h - 1 && f.push(o[C]);
+        var g = f.length;
+        g > 30 && (r = f.slice(0, 10).join("") + f.slice(Math.floor(g / 2) - 5, Math.floor(g / 2) + 5).join("") + f.slice(-10).join(""));
+      }
+      var u = void 0
+        ;
+      u = null !== i ? i : (i = gtk || "") || "";
+      for (var d = u.split("."), m = Number(d[0]) || 0, s = Number(d[1]) || 0, S = [], c = 0, v = 0; v < r.length; v++) {
+        var A = r.charCodeAt(v);
+        128 > A ? S[c++] = A : (2048 > A ? S[c++] = A >> 6 | 192 : (55296 === (64512 & A) && v + 1 < r.length && 56320 === (64512 & r.charCodeAt(v + 1)) ? (A = 65536 + ((1023 & A) << 10) + (1023 & r.charCodeAt(++v)),
+        S[c++] = A >> 18 | 240,
+        S[c++] = A >> 12 & 63 | 128) : S[c++] = A >> 12 | 224,
+        S[c++] = A >> 6 & 63 | 128),
+        S[c++] = 63 & A | 128);
+      }
+      for (var p = m, F = "" + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(97) + ("" + String.fromCharCode(94) + String.fromCharCode(43) + String.fromCharCode(54)), D = "" + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(51) + ("" + String.fromCharCode(94) + String.fromCharCode(43) + String.fromCharCode(98)) + ("" + String.fromCharCode(43) + String.fromCharCode(45) + String.fromCharCode(102)), b = 0; b < S.length; b++)
+        p += S[b],
+        p = n(p, F);
+      return p = n(p, D),
+      p ^= s,
+      0 > p && (p = (2147483647 & p) + 2147483648),
+      p %= 1e6,
+      p.toString() + "." + (p ^ m)
+    }
+
+    /**
+     * @param  {string} word
+     * @param  {string} gtk
+     * @return {string}
+     */
+    var calcSign = (word, gtk) => {
+      return e(word,gtk);
+    };
+
+    //获取gtk和token
+    function GetToken(){
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: "https://fanyi.baidu.com/",
+            timeout:5000,
+            onload: function (r) {
+                var gtkMatch = /window\.gtk = '(.*?)'/.exec(r.responseText);
+                var commonTokenMatch = /token: '(.*?)',/.exec(r.responseText);
+                if (!gtkMatch) {
+                  console.log("获取gtk失败！！！");
+                }
+                if (!commonTokenMatch) {
+                  console.log("获取token失败！！！");
+                }
+                var newGtk = gtkMatch[1];
+                var newCommonToken = commonTokenMatch[1];
+
+                if (typeof newGtk !== 'undefined') {
+                    baiduTrans.gtk=newGtk;
+                }
+                if (typeof newCommonToken !== 'undefined') {
+                    baiduTrans.token=newCommonToken;
+                }
+            },
+            onerror: function (e) {
+                console.error(e);
+            }
+        });
+    }
+
+    //百度翻译
+    var baiduTrans = {
+        code:"bd",
+        codeText:"百度",
+        gtk:"",
+        token:"",
+        defaultOrigLang:"auto",         //默认源语言
+        defaultTargetLang:"zh",         //默认目标语言
+        langList: {"auto": "自动检测","zh": "中文","cht": "繁体中文","en": "英语","jp": "日语","kor": "韩语","fra": "法语","spa": "西班牙语","pt": "葡萄牙语","it": "意大利语","ru": "俄语","vie": "越南语","de": "德语","ara": "阿拉伯语"},
+        Execute: function (h_onloadfn) {
+            console.log("dbexec: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
+            if(Trans.transOrigLang=="auto")
+                this.AutoTrans(h_onloadfn);
+            else
+                this.ExecTrans(h_onloadfn);
+            
+        },
+        AutoTrans:function(h_onloadfn){
+            var self=this;
+            var datas={
+                query:Trans.transText
+            };
+            GM_xmlhttpRequest({
+                method: "POST",
+                headers:{
+                    "referer": 'https://fanyi.baidu.com',
+                    "Content-Type": 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                url: "https://fanyi.baidu.com/langdetect",
+                data: ObjectToQueryString(datas),
+                onload: function (r) {
+                    var data = JSON.parse(r.responseText);
+                    if(data.error===0){
+                        Trans.transOrigLang=data.lan;
+                        self.ExecTrans(h_onloadfn);
+                    }
+                },
+                onerror: function (e) {
+                    console.error(e);
+                }
+            });
+        },
+        ExecTrans:function(h_onloadfn){
+            var tempSign=calcSign(Trans.transText,this.gtk);
+            var datas={
+                from:Trans.transOrigLang,
+                to:Trans.transTargetLang,
+                query:Trans.transText,
+                transtype:"translang",
+                simple_means_flag:3,
+                sign:tempSign,
+                token:this.token
+            };
+            GM_xmlhttpRequest({
+                method: "POST",
+                headers:{
+                    "referer": 'https://fanyi.baidu.com',
+                    "Content-Type": 'application/x-www-form-urlencoded; charset=UTF-8',
+                    //"User-Agent": window.navigator.userAgent,
+                },
+                url: "https://fanyi.baidu.com/v2transapi",
+                data: ObjectToQueryString(datas),
+                onload: function (r) {
+                    setTimeout(function () {
+                        var result= JSON.parse(r.responseText);
+                        var trans_result=result.trans_result;
+                        var transDatas = trans_result.data;
+                        
+                        var trans = [],origs = [],src = "";
+                        for (var i = 0; i < transDatas.length; i++) {
+                            var getransCont = transDatas[i];
+                            trans.push(getransCont.dst);
+                            origs.push(getransCont.src);
+                        }
+                        src = trans_result.from;
+                        Trans.transResult.trans = trans;
+                        Trans.transResult.orig = origs;
+                        Trans.transResult.origLang = src;
+                        h_onloadfn();
+                    }, 300);
+                },
+                onerror: function (e) {
+                    console.error(e);
+                }
+            });
+        },
+        init:function(){
+            GetToken();
+        }
+    };
+
     var Trans={
         transEngineList:{},         //翻译引擎实例列表
         transEngine:"",             //当前翻译引擎。ge(谷歌)/yd(有道)
@@ -283,7 +475,7 @@
             this.transResult.orig=[];
             this.transResult.origLang="";
         },
-        //注册翻译引擎接口
+        //注册翻译引擎接口并执行翻译引擎的初始化接口
         RegisterEngine:function(){
             /**
              * 翻译引擎必须提供以下接口
@@ -292,12 +484,19 @@
                 defaultOrigLang:"",         //默认源语言
                 defaultTargetLang:"",       //默认目标语言
                 langList: {},               //支持翻译语言列表
-                Execute: function (h_onloadfn) {}   
+                Execute: function (h_onloadfn) {},     //执行翻译
+                init:function(){},          //可选，初始化接口，在脚本创建时立即执行
              */
             var transEngineListObj={};
             transEngineListObj[googleTrans.code]=googleTrans;
             transEngineListObj[youdaoTrans.code]=youdaoTrans;
+            transEngineListObj[baiduTrans.code]=baiduTrans;
             this.transEngineList=transEngineListObj;
+            for (const key in this.transEngineList) {
+                if (this.transEngineList.hasOwnProperty(key) && this.transEngineList[key].hasOwnProperty("init")) {
+                    this.transEngineList[key].init();
+                }
+            }
         }
     };
 

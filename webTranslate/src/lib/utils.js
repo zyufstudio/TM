@@ -81,6 +81,12 @@ export function ClearBubble(e) {
         e.returnValue = false;
     }
 }
+export function ObjectToQueryString(object){
+    var querystring=Object.keys(object).map(function(key) { 
+        return encodeURIComponent(key) + '=' + encodeURIComponent(object[key]) 
+    }).join('&');
+    return querystring;
+}
 
 /**
  * 配置参数
