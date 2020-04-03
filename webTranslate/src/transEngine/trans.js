@@ -22,7 +22,6 @@ export var Trans={
         this.transResult.trans=[];
         this.transResult.orig=[];
         this.transResult.origLang="";
-        console.log(this.transEngine+" ,this.Trans.exec: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
         this.transEngineObj.Execute(h_onloadfn);
     },
     GetLangList:function(){
@@ -37,7 +36,6 @@ export var Trans={
         this.transEngineObj=this.transEngineList[this.transEngine];
         this.transTargetLang=this.transEngineObj.defaultTargetLang;
         this.transOrigLang=this.transEngineObj.defaultOrigLang;
-        console.log(this.transEngine+" ,this.Trans.Update: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
     },
     Clear:function(){
         this.transEngine="";                //当前翻译引擎。ge(谷歌)/yd(有道)

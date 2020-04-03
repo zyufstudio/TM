@@ -42,7 +42,6 @@ export var TextTransPanel={
                 Trans.Update();
                 Panel.Update(function($panel){
                     var html=self.GetHtml();
-                    console.log("text Engine: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                     //翻译内容
                     $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(1)",randomCode)).html("");
                     $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).html(html.origLangListHtml);
@@ -69,7 +68,6 @@ export var TextTransPanel={
                     return;
                 }
                 Trans.transText=refTransText;
-                console.log("text Trans: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                 Trans.Execute(function(){
                     Panel.Update(function($panel){
                         var html=self.GetHtml();

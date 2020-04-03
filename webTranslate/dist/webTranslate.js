@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.2.0
+// @version      1.2.1
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译,有道字典翻译和百度翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
@@ -195,7 +195,6 @@
         defaultTargetLang:"ZH-CHS",     //默认目标语言
         langList: {"AUTO": "自动检测","zh-CHS": "中文","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
         Execute: function (h_onloadfn) {
-            console.log("ydexec: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
             var h_url = "",
                 h_headers = {},
                 h_data = "";
@@ -353,7 +352,6 @@
         defaultTargetLang:"zh",         //默认目标语言
         langList: {"auto": "自动检测","zh": "中文","cht": "繁体中文","en": "英语","jp": "日语","kor": "韩语","fra": "法语","spa": "西班牙语","pt": "葡萄牙语","it": "意大利语","ru": "俄语","vie": "越南语","de": "德语","ara": "阿拉伯语"},
         Execute: function (h_onloadfn) {
-            console.log("dbexec: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
             if(Trans.transOrigLang=="auto")
                 this.AutoTrans(h_onloadfn);
             else
@@ -454,7 +452,6 @@
             this.transResult.trans=[];
             this.transResult.orig=[];
             this.transResult.origLang="";
-            console.log(this.transEngine+" ,this.Trans.exec: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
             this.transEngineObj.Execute(h_onloadfn);
         },
         GetLangList:function(){
@@ -469,7 +466,6 @@
             this.transEngineObj=this.transEngineList[this.transEngine];
             this.transTargetLang=this.transEngineObj.defaultTargetLang;
             this.transOrigLang=this.transEngineObj.defaultOrigLang;
-            console.log(this.transEngine+" ,this.Trans.Update: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
         },
         Clear:function(){
             this.transEngine="";                //当前翻译引擎。ge(谷歌)/yd(有道)
@@ -584,7 +580,6 @@
                     Trans.Update();
                     Panel.Update(function($panel){
                         var html=self.GetHtml();
-                        console.log("text Engine: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                         //翻译内容
                         $panel.find(StringFormat("#panelBody{0} div:eq(1) div:eq(1)",randomCode)).html("");
                         $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).html(html.origLangListHtml);
@@ -611,7 +606,6 @@
                         return;
                     }
                     Trans.transText=refTransText;
-                    console.log("text Trans: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
                     Trans.Execute(function(){
                         Panel.Update(function($panel){
                             var html=self.GetHtml();

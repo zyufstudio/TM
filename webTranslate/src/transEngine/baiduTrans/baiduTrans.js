@@ -13,7 +13,6 @@ export var baiduTrans = {
     defaultTargetLang:"zh",         //默认目标语言
     langList: {"auto": "自动检测","zh": "中文","cht": "繁体中文","en": "英语","jp": "日语","kor": "韩语","fra": "法语","spa": "西班牙语","pt": "葡萄牙语","it": "意大利语","ru": "俄语","vie": "越南语","de": "德语","ara": "阿拉伯语"},
     Execute: function (h_onloadfn) {
-        console.log("dbexec: TargetLang:"+Trans.transTargetLang+" OrigLang:"+Trans.transOrigLang);
         if(Trans.transOrigLang=="auto")
             this.AutoTrans(h_onloadfn);
         else

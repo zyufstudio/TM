@@ -1,6 +1,6 @@
 {
   "name": "webtranslate",
-  "version": "1.1.9",
+  "version": "1.2.1",
   "description": "网页翻译助手",
   "main": "webTranslate.js",
   "scripts": {
