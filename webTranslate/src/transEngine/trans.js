@@ -40,10 +40,10 @@ export var Trans={
         console.log(this.transEngine+" ,this.Trans.Update: TargetLang:"+this.transTargetLang+" OrigLang:"+this.transOrigLang);
     },
     Clear:function(){
-        this.transEngine="",                //当前翻译引擎。ge(谷歌)/yd(有道)
-        this.transTargetLang="",            //目标语言。
-        this.transOrigLang="",              //源语言
-        this.transText=""                   //被翻译内容
+        this.transEngine="";                //当前翻译引擎。ge(谷歌)/yd(有道)
+        this.transTargetLang="";            //目标语言。
+        this.transOrigLang="";             //源语言
+        this.transText="";                   //被翻译内容
         this.transResult.trans=[];
         this.transResult.orig=[];
         this.transResult.origLang="";
