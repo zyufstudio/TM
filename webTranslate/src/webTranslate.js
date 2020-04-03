@@ -70,6 +70,8 @@ var WebTranslate=function(){
             }
         });
         $wordTransIcon.click(function(e){
+            Trans.Clear();
+            Panel.Destroy();
             var selecter=window.getSelection();
             var selectText = selecter.toString().trim();
             GetSettingOptions();
