@@ -10,6 +10,7 @@
 - 2020/1/8   v1.1.4     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;重写面板
 - 2020/1/9   v1.1.5     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入谷歌整页翻译
 - 2020/3/6   v1.1.8     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入设置默认翻译引擎
+- 2020/4/3   v1.2.0     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入百度翻译
 
 ### 适用网站
 - 所有网站
