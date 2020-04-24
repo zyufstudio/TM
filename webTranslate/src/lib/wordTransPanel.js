@@ -25,7 +25,8 @@ export var WordTransPanel={
         
         Panel.popBoxEl=popBoxEl;
         Panel.randomCode=randomCode;
-        Panel.Create("","auto bottom",false,wordTransPanelHtml,function($panel){
+        Panel.Create("","auto bottom",false,wordTransPanelHtml,function($panel){+
+            
             //目标语言
             $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).change(function(e){
                 Trans.transTargetLang=$(this).find("option:selected").val();

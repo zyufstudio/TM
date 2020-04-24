@@ -28,7 +28,8 @@ export var Panel={
         Fn($panel);    
     },
     Destroy:function(){
-        $(this.popBoxEl).jPopBox("hideDelayed");
+        //$(this.popBoxEl).jPopBox("hideDelayed");
+        $(this.popBoxEl).jPopBox("destroy");
     },
     CreateStyle:function(){
         var s="";

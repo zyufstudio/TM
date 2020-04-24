@@ -104,6 +104,9 @@ var WebTranslate=function(){
             $head.append(StringFormat('<script>{0}</script>',cbscript));
         });
         GM_registerMenuCommand("设置",function(){
+            $("div#wordTrans"+randomCode).hide();
+            Trans.Clear();
+            Panel.Destroy();
             SettingPanel.Create($body,randomCode);
         });
     }
