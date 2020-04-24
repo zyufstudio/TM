@@ -20,7 +20,7 @@
 // @connect      fanyi.baidu.com
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery.md5@1.0.2/index.min.js
-// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.js
+// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jPopBox/dist/jPopBox.min.js
 // ==/UserScript==
 
 
