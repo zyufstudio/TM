@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         返回顶部和底部
-// @namespace    https://www.chlung.com/
 // @version      1.1.1
 // @description  在网页生成返回顶部和底部按钮，点击按钮即可返回顶部或底部。
 // @author       Johnny Li
@@ -19,6 +18,7 @@
     var TBLink = function () {
         var $ = $ || window.$;
         var $doc = $(document);
+        var $win=$(window);
         var CreateHtml = function () {
             var html = 'rep_html';
             $("html body").append(html);
@@ -59,20 +59,20 @@
             $doc.scroll(function () {
                 if (getScrollTop() > upperLimit) {
                     $top.stop().fadeTo(fadeSpeed, 1, function () {
-                        $top.show();
+                        $top.css("visibility","visible");
                     });
                 } else {
                     $top.stop().fadeTo(fadeSpeed, 0, function () {
-                        $top.hide();
+                        $top.css("visibility","hidden")
                     });
                 }
                 if (getScrollTop() + $(window).height() < $doc.height() - upperLimit) {
                     $bottom.stop().fadeTo(fadeSpeed, 1, function () {
-                        $bottom.show();
+                        $bottom.css("visibility","visible");
                     });
                 } else {
                     $bottom.stop().fadeTo(fadeSpeed, 0, function () {
-                        $bottom.hide();
+                        $bottom.css("visibility","hidden");
                     });
                 }
             });
@@ -118,10 +118,13 @@
                     $doc.on({
                         "mousemove.gtb": function (docEl) {
                             if (move) {
+                                var x1=docEl.pageX - x;
+                                var y1=docEl.pageY - y;
                                 $gtbBox.offset({
-                                    left: docEl.pageX - x,
-                                    top: docEl.pageY - y
+                                    left: x1,
+                                    top:y1 
                                 });
+                                docEl.preventDefault();
                             }
                         },
                         "mouseup.gtb": function () {
