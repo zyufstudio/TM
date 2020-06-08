@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         返回顶部和底部
-// @version      1.1.1
+// @version      1.1.2
 // @description  在网页生成返回顶部和底部按钮，点击按钮即可返回顶部或底部。
 // @author       Johnny Li
 // @license      MIT
@@ -124,7 +124,6 @@
                                     left: x1,
                                     top:y1 
                                 });
-                                docEl.preventDefault();
                             }
                         },
                         "mouseup.gtb": function () {
