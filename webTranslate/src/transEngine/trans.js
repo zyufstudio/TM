@@ -1,5 +1,5 @@
 import {googleTrans}from "./googleTrans"
-import {youdaoTrans} from "./youdaoTrans"
+import {youdaoTrans} from "./youdaoTrans/youdaoTrans"
 import {baiduTrans} from "./baiduTrans/baiduTrans"
 
 export var Trans={

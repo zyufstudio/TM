@@ -11,7 +11,8 @@
 - 2020/1/9   v1.1.5     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入谷歌整页翻译
 - 2020/3/6   v1.1.8     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入设置默认翻译引擎
 - 2020/4/3   v1.2.0     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入百度翻译
-- 2020/4/22  v1.2.2     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复显示翻译面板后再打开设置时，无法关闭翻译面板的问题
+- 2020/4/22  v1.2.2     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复显示翻译面板后再打开设置时，无法关闭翻译面板的问题
+- 2020/8/25  v1.2.6     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复有道翻译引擎只能翻译前部分内容
 
 ### 适用网站
 - 所有网站
