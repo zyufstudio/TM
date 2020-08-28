@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         获取网站所有图片
-// @version      1.2.0
+// @version      1.2.5
 // @namespace    https://github.com/zyufstudio/TM/tree/master/getWebsiteImg
 // @description  获取网站的所有图片，支持查看和下载。
 // @author       Johnny Li
@@ -13,12 +13,12 @@
 // @connect      cdn.jsdelivr.net
 // @connect      cdn.bootcss.com
 // @connect      *
-// @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery@2.2.3/dist/jquery.min.js
 // @require      https://cdn.bootcss.com/jszip/3.2.2/jszip.min.js
 // @require      https://cdn.bootcss.com/FileSaver.js/1.3.8/FileSaver.min.js
 // @require      https://cdn.jsdelivr.net/npm/hotkeys-js@3.7.2/dist/hotkeys.min.js
-// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jDialog/dist/jquery.jDialog.min.js
-// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@master/jBoxSelect/dist/jquery.jBoxSelect.min.js
+// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@9f5d14cfbcf3b929faba365ba262e0e61e50496c/jDialog/dist/jquery.jDialog.min.js
+// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@07859893ea1f34dcaaf33cb90a3555c9140b9ff1/jBoxSelect/dist/jquery.jBoxSelect.min.js
 // ==/UserScript==
 
 (function() {

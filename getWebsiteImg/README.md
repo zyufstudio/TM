@@ -8,6 +8,7 @@
 - 点击下载按钮，下载选中的图片。
 - zip压缩下载选中图片。
 - 快捷键<kbd>Alt</kbd>+<kbd>P</kbd>获取图片
+- 兼容油猴(tampermonkey)，暴力猴(violentmonkey)
 
 ### 更新记录
 - 2019/8/3  v0.2    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复只能连续下载10张图片
@@ -18,6 +19,7 @@
 - 2020/1/3   v1.1.8     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;增加zip压缩下载
 - 2020/2/15  v1.1.9     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加快捷键<kbd>Alt</kbd>+<kbd>P</kbd>获取图片
 - 2020/2/15  v1.2.0     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加入斜线背景底纹
+- 2020/8/28  v1.2.5     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;兼容暴力猴
 
 ### 适用网站
 - 所有网站
