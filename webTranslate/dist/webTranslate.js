@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.2.6
+// @version      1.2.8
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译,有道字典翻译和百度翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
@@ -19,9 +19,9 @@
 // @connect      fanyi.youdao.com
 // @connect      fanyi.baidu.com
 // @connect      shared.ydstatic.com
-// @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery@2.2.3/dist/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery.md5@1.0.2/index.min.js
-// @require      https://greasyfork.org/scripts/409929-jpopbox/code/JPopBox.js?version=841154
+// @require      https://cdn.jsdelivr.net/gh/zyufstudio/jQuery@3a09ff54b33fc2ae489b5083174698b3fa83f4a7/jPopBox/dist/jPopBox.min.js
 // ==/UserScript==
 
 
@@ -189,20 +189,39 @@
     };
 
     //获取sign
-    function GetSign() {
+    function getSign() {
         GM_xmlhttpRequest({
             method: "GET",
-            url: "http://shared.ydstatic.com/fanyi/newweb/v1.0.28/scripts/newweb/fanyi.min.js",
+            url: "http://fanyi.youdao.com/",
             timeout: 5000,
-            onload: function (r) {
-                //sign正则匹配字符串  sign:n.md5("fanyideskweb"+e+i+"]BjuETDhU)zqSxf-=B#7m")}};
-                var signMatch = /sign:[a-z]{1}\.md5\("fanyideskweb"\+[a-z]{1}\+[a-z]{1}\+"(.*)"\)}};/g.exec(r.responseText);
-                if (!signMatch) {
-                    console.log("获取sign失败！！！");
+            onload: function (ydRes) {
+                //fanyijsUrlMatch正则匹配字符串  <script type="text/javascript" src="http://shared.ydstatic.com/fanyi/newweb/v1.0.29/scripts/newweb/fanyi.min.js"></script>
+                var fanyijsUrlMatch = /<script\s+type="text\/javascript"\s+src="([http|https]*?:\/\/shared.ydstatic.com\/fanyi\/newweb\/v[\d.]+\/scripts\/newweb\/fanyi.min.js)"><\/script>/g.exec(ydRes.responseText);
+                if (!fanyijsUrlMatch) {
+                    console.log("获取fanyi.min.js失败！！！");
                 } else {
-                    var newSign = signMatch[1];
-                    if (typeof newSign !== 'undefined') {
-                        youdaoTrans.sign = newSign;
+                    var fanyijsUrl = fanyijsUrlMatch[1];
+                    if (typeof fanyijsUrl !== 'undefined') {
+                        GM_xmlhttpRequest({
+                            method: "GET",
+                            url: fanyijsUrl,
+                            timeout: 5000,
+                            onload: function (r) {
+                                //sign正则匹配字符串  sign:n.md5("fanyideskweb"+e+i+"]BjuETDhU)zqSxf-=B#7m")}};
+                                var signMatch = /sign:[a-z]{1}\.md5\("fanyideskweb"\+[a-z]{1}\+[a-z]{1}\+"(.*)"\)}};/g.exec(r.responseText);
+                                if (!signMatch) {
+                                    console.log("获取sign失败！！！");
+                                } else {
+                                    var newSign = signMatch[1];
+                                    if (typeof newSign !== 'undefined') {
+                                        youdaoTrans.sign = newSign;
+                                    }
+                                }
+                            },
+                            onerror: function (e) {
+                                console.error(e);
+                            }
+                        });
                     }
                 }
             },
@@ -290,7 +309,7 @@
             });
         },
         init:function(){
-            GetSign();
+            getSign();
         }
     };
 
