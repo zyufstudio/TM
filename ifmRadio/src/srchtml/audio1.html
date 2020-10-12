@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .main{
+            width: 500px;
+        }
+        .volume {
+            width: 100px;
+        }
+
+        .slider {
+            margin-top: 6px;
+            margin-left: 10px;
+            width: 100px;
+        }
+
+        .slider {
+            background: rgba(0, 0, 0, 0.3);
+            height: 7px;
+            position: relative;
+            cursor: pointer;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -o-border-radius: 5px;
+            -ms-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            border-radius: 5px;
+            -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+            -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+            -o-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+        }
+
+        .slider:hover a,
+        .slider.enable a {
+            opacity: 1;
+        }
+
+        .slider a {
+            background: #fff;
+            margin-left: -2.5px;
+            position: absolute;
+            opacity: 0;
+            width: 5px;
+            height: 5px;
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            -o-border-radius: 50%;
+            -ms-border-radius: 50%;
+            -khtml-border-radius: 50%;
+            border-radius: 50%;
+            -moz-transition: opacity 0.3s;
+            -webkit-transition: opacity 0.3s;
+            -o-transition: opacity 0.3s;
+            transition: opacity 0.3s;
+        }
+
+        .slider .loaded,
+        .slider .progress {
+            position: absolute;
+            height: 100%;
+            opacity: 0.7;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -o-border-radius: 5px;
+            -ms-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        .slider .loaded {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .slider .progress {
+            background: #258fb8;
+        }
+
+        .slider .dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border: 1px solid #000;
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            margin: auto 0;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+    <div class="volume right">
+        <div class="slider left">
+            <div class="progress"></div>
+            <div class="dot" ></div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
+<script>
+    //  获取所有的节点元素
+    var content = document.getElementsByClassName('volume')[0]
+    var bar = document.getElementsByClassName('slider')[0]
+    var progress = document.getElementsByClassName('progress')[0]
+    var dot = document.getElementsByClassName('dot')[0]
+    var sliderLength = bar.offsetWidth;
+    /*
+     * offsetWidth 获取当前节点的宽度 （width + border + padding）
+     **/
+    // 总长度减去原点覆盖的部分
+    var rest = bar.offsetWidth - dot.offsetWidth
+    // 鼠标按下事件
+    dot.onmousedown = function (ev) {
+        /*
+         * offsetLeft 获取的是相对于父对象的左边距, 返回的是数值， 没有单位
+         */
+        let dotL = dot.offsetLeft
+        let e = ev || window.event //兼容性
+        /*
+         * clientX 事件属性返回当事件被触发时鼠标指针向对于浏览器页面（或客户区）的水平坐标。
+         */
+        let mouseX = e.clientX //鼠标按下的位置
+        window.onmousemove = function (ev) {
+            let e = ev || window.event
+            // 浏览器当前位置减去鼠标按下的位置
+            let moveL = e.clientX - mouseX //鼠标移动的距离
+
+            // 保存newL是必要的    
+            let newL = dotL + moveL //left值
+            // 判断最大值和最小值
+            if (newL < 0) {
+                newL = 0
+            }
+            if (newL >= rest) {
+                newL = rest
+            }
+            // 改变left值
+            dot.style.left = newL + 'px'
+            // 计算比例
+            let bili = newL / rest * 100
+            progress.style.width = 100 * Math.ceil(bili) / 100 + 'px';
+            return false //取消默认事件
+        }
+        window.onmouseup = function () {
+            window.onmousemove = false //解绑移动事件
+            return false
+        }
+        return false
+    };
+    // 点击音量条
+    bar.onclick = function (ev) {
+        let left = ev.clientX -getElementLeft(content)- dot.offsetWidth / 2
+        if (left < 0) {
+            left = 0
+        }
+        if (left >= rest) {
+            left = rest
+        }
+        dot.style.left = left + 'px'
+        let bili = left / rest * 100
+        progress.style.width = 100 * Math.ceil(bili) / 100 + 'px';
+        return false
+    };
+    function getElementLeft(element) {
+                let actualLeft = element.offsetLeft;
+                let current = element.offsetParent;
+                while (current !== null) {
+                    actualLeft += current.offsetLeft;
+                    current = current.offsetParent;
+                }
+                return actualLeft;
+            }
+</script>

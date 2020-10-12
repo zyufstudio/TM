@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="play()"></button>
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/howler@2.2.0/dist/howler.min.js"></script>
+<script>
+    function play() {
+        var sound = new Howl({
+            src: ['https://lhttp.qingting.fm/live/1260/64k.mp3'],
+            html5: true,
+            autoplay: true,
+            loop: true,
+            volume: 0.5,
+        });
+        sound.play()
+    }
+</script>
