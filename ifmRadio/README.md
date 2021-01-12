@@ -11,10 +11,6 @@
 ### 适用网站
 - 所有网站
 
-### 打赏
-- 如果你喜欢本脚本或者想支持一下作者的，那就请作者喝杯咖啡吧！
-![](https://greasyfork.org/system/screenshots/screenshots/000/023/563/original/zanshangma.png?1600784028)
-
 ### GitHub项目地址
 - https://github.com/zyufstudio/TM/tree/master/ifmRadio
 
