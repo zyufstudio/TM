@@ -1,0 +1,22 @@
+{
+  "name": "ifmradio",
+  "version": "1.0.0",
+  "description": "FM网络收音机，广播电台在线收听。",
+  "main": "ifmradio.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/.bin/gulp -f ./build/build.js"
+  },
+  "author": "Johnny Li",
+  "license": "MIT",
+  "devDependencies": {
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-less": "^4.0.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.0.0",
+    "rollup": "^2.26.8"
+  }
+}

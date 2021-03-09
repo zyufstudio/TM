@@ -1,0 +1,605 @@
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg)
+    }
+
+    to {
+        -webkit-transform: rotate(360deg)
+    }
+}
+
+@-moz-keyframes rotate {
+    from {
+        -moz-transform: rotate(0deg)
+    }
+
+    to {
+        -moz-transform: rotate(359deg)
+    }
+}
+
+@-o-keyframes rotate {
+    from {
+        -o-transform: rotate(0deg)
+    }
+
+    to {
+        -o-transform: rotate(359deg)
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg)
+    }
+
+    to {
+        transform: rotate(359deg)
+    }
+}
+/*************loading图标动画************/
+@keyframes loading-rotate {
+    to {
+        transform:rotate(1turn)
+    }
+}
+@keyframes loading-dash {
+    0% {
+        stroke-dasharray:1, 200;
+        stroke-dashoffset:0
+    }
+    50% {
+        stroke-dasharray:90, 150;
+        stroke-dashoffset:-40px
+    }
+    to {
+        stroke-dasharray:90, 150;
+        stroke-dashoffset:-120px
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: hsla(220, 4%, 58%, 0.3);
+        transition: background-color 0.3s;
+    
+        &:hover {
+            background: #777;
+        }
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: #333;
+    }
+}
+
+body {
+    font: 14px "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
+    background: #333 !important;
+    color: #fff !important;
+}
+
+a {
+    outline: none;
+    text-decoration: none;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+#background {
+    background-size: cover;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+//播放图片精灵图
+
+#playerBGImageSprite {
+    @playerImageSprite: "data:image/png;base64,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";
+    background: url(@playerImageSprite) no-repeat top left;
+    width: 16px;
+    height: 16px;
+
+    .fastforward {
+        background-position: 0 0;
+    }
+
+    .mute {
+        background-position: 0 -26px;
+    }
+
+    .pause {
+        background-position: 0 -52px;
+    }
+
+    .play {
+        background-position: 0 -78px;
+    }
+
+    .playing {
+        background-position: 0 -104px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .repeat {
+        background-position: 0 -126px;
+    }
+
+    .rewind {
+        background-position: 0 -152px;
+    }
+
+    .shuffle {
+        background-position: 0 -178px;
+    }
+
+    .volume {
+        background-position: 0 -204px;
+    }
+}
+
+//播放控制
+.player {
+    width: 500px;
+    height: 130px;
+    padding: 25px;
+    margin: 50px auto;
+    position: relative;
+    .tingFMHtml{
+        display: none;
+    }
+    .cover {
+        @cover_W_H:130px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        overflow: hidden;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -o-border-radius: 10px;
+        -ms-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        border-radius: 50%;
+        width: @cover_W_H;
+        height: @cover_W_H;
+        &.rotate{
+            -moz-box-shadow: 0 2px 10px black;
+            -webkit-box-shadow: 0 2px 10px black;
+            -o-box-shadow: 0 2px 10px black;
+            box-shadow: 0 2px 10px black;
+            -webkit-animation: rotate 5s linear infinite;
+            -moz-animation: rotate 5s linear infinite;
+            -o-animation: rotate 5s linear infinite;
+            animation: rotate 5s linear infinite;
+        }
+        img {
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -o-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -khtml-border-radius: 10px;
+            border-radius: 50%;
+            width: @cover_W_H;
+            height: @cover_W_H;
+        }
+        .radioLoading{
+            text-align: center;
+            color: white;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: @cover_W_H;
+            height: @cover_W_H;
+            background-color: #00000073;
+            line-height: 20px;
+            padding-top: 40%;
+            &.error{
+                padding-top: 30%;
+            }
+        }
+    }
+
+    .ctrl {
+        margin-left: 155px;
+        text-shadow: 0 1px 2px #000;
+        line-height: 16px;
+        .tag span {
+            display: inline-block;
+            font-size: 12px;
+            margin-top: 5px;
+            color: #ccc;
+            text-overflow: ellipsis
+        }
+        .tag{
+            .title{
+                display: block;
+                text-overflow: ellipsis;
+            }
+            .limitText{
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2; /* 可以显示的行数，超出部分用...表示*/
+                -webkit-box-orient: vertical;
+            }
+            .zanshang{
+                a{
+                    color: #d81e06;
+                }
+            }
+        }
+        .icon {
+            background-repeat: no-repeat;
+            background-position: center;
+            display: inline-block;
+            opacity: 0.6;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            -moz-transition: 0.3s;
+            -webkit-transition: 0.3s;
+            -o-transition: 0.3s;
+            transition: 0.3s;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+
+            &:hover,
+            &.enable {
+                opacity: 1;
+            }
+
+            &:active {
+                opacity: 0.3;
+            }
+        }
+
+        .control {
+            margin-top: 10px;
+            height: 25px;
+
+            .rewind {
+                #playerBGImageSprite;
+                #playerBGImageSprite.rewind;
+            }
+
+            .playback {
+                #playerBGImageSprite;
+                #playerBGImageSprite.play;
+
+                &.playing {
+                    #playerBGImageSprite;
+                    #playerBGImageSprite.pause;
+                }
+            }
+
+            .fastforward {
+                #playerBGImageSprite;
+                #playerBGImageSprite.fastforward;
+            }
+
+            .right {
+
+                //静音图标
+                .mute {
+                    padding-right: 1px;
+                    #playerBGImageSprite;
+                    #playerBGImageSprite.volume;
+
+                    &.enable {
+                        #playerBGImageSprite;
+                        #playerBGImageSprite.mute;
+                    }
+                }
+
+                //音量控制滑块
+                .volSlider {
+                    display: inline-block;
+                    margin-bottom: 3px;
+                }
+            }
+        }
+
+        .progress {
+            //margin-top: 10px;
+
+            .timer {
+                font-size: 12px;
+                color: #ccc;
+                margin-top: 8px;
+            }
+
+            & .repeat,
+            & .shuffle {
+                background-position: center bottom;
+            }
+
+            .repeat {
+                #playerBGImageSprite;
+                #playerBGImageSprite.repeat;
+
+                &.once,
+                &.all {
+                    opacity: 1;
+                }
+
+                &.once {
+                    position: relative;
+
+                    &:before {
+                        content: "1";
+                        position: absolute;
+                        top: 3px;
+                        right: -2px;
+                        font-size: 8px;
+                    }
+                }
+            }
+
+            .shuffle {
+                #playerBGImageSprite;
+                #playerBGImageSprite.shuffle;
+            }
+
+            .playOrder {
+                margin-top: 8px;
+            }
+        }
+    }
+}
+
+//滑块
+.slider {
+    background: rgba(0, 0, 0, 0.3);
+    height: 7px;
+    position: relative;
+    cursor: pointer;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+    //旋转
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+    -o-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
+
+    .slider_bar {
+        .slider_progress {
+            position: absolute;
+            background: #777;
+            height: 100%;
+            opacity: 0.7;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -o-border-radius: 5px;
+            -ms-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        .slider_dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border: 1px solid #000;
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            margin: auto 0;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    }
+}
+
+//播放列表
+.playList {
+    background: rgba(0, 0, 0, 0.5);
+    width: 470px;
+    margin: 0 auto 50px;
+    padding: 10px 15px;
+    position: relative;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    -o-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+
+    .tingFMHtml {
+        display: none;
+    }
+
+    .list {
+        height: 373px;
+
+        //流派列表
+        .genreList {
+            margin-left: 10px;
+            width: 110px;
+            line-height: 43px;
+            text-align: center;
+            float: left;
+            overflow-y: auto;
+            height: 330px;
+            ul {
+                list-style: none;
+
+                li {
+                    color: #aaa;
+                    font-size: 12px;
+                    line-height: 35px;
+                    text-overflow: ellipsis;
+                    -moz-transition: 0.3s;
+                    -webkit-transition: 0.3s;
+                    -o-transition: 0.3s;
+                    transition: 0.3s;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #333;
+                    }
+
+                    &.active {
+                        background: black;
+                        border-radius: 4px 0 0 4px;
+                    }
+                }
+            }
+        }
+
+        //电台列表
+        .radioList {
+            background-color: #000;
+            width: 335px;
+            float: left;
+            border-radius: 4px;
+            height: 330px;
+            line-height: 330px;
+            overflow-y: auto;
+            ul {
+                list-style: none;
+
+                li {
+                    color: #aaa;
+                    font-size: 12px;
+                    line-height: 2;
+                    margin-left: 25px;
+                    text-overflow: ellipsis;
+                    -moz-transition: 0.3s;
+                    -webkit-transition: 0.3s;
+                    -o-transition: 0.3s;
+                    transition: 0.3s;
+                    .radioName{
+                        cursor: pointer;
+                        &:hover {
+                            color: #fff;
+                        }
+                    }
+                    &.playing {
+                        #playerBGImageSprite;
+                        #playerBGImageSprite.playing;
+                        color: #fff;
+                        font-weight: bold;
+                    }
+                    .listen{
+                        float: right;
+                        padding-right: 15px;
+                    }
+                }
+            }
+            .loadRadioList{
+                text-align: center;
+                background-color: #94939375;
+                position: absolute;
+                top: 3%;
+                width: inherit;
+                height: inherit;
+                .circular{
+                    height: 42px;
+                    width: 42px;
+                    animation: loading-rotate 2s linear infinite;
+                    .path{
+                        animation: loading-dash 1.5s ease-in-out infinite;
+                        stroke-dasharray: 90,150;
+                        stroke-dashoffset: 0;
+                        stroke-width: 2;
+                        stroke: #409eff;
+                        stroke-linecap: round;
+                    }
+                }
+            }
+        }
+        .page{
+            text-align: center;
+            clear: both;
+            margin-left: 80px;
+            font-size: 14px;
+            color: #aaa;
+            line-height: 30px;
+            .prev{
+                &.marginRight{
+                    margin-right: 50px;
+                }
+                cursor: pointer;
+                &:hover{
+                    color: #fff;
+                }
+            }
+            .next{
+                cursor: pointer;
+                &:hover{
+                    color: #fff;
+                }
+            }
+        }
+        .dataCopyright {
+            clear: both;
+            text-align: center;
+            line-height: 13px;
+            color: gray;
+            font-size: 12px;
+            span{
+                a{
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+
+.footer {
+    position: relative;
+    font-size: 12px;
+    color: white;
+    margin-top: 160px;
+    text-shadow: 0 1px 2px #000;
+    text-align: center;
+
+    a {
+        color: #fff;
+        font-weight: bold;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
