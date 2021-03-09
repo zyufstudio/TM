@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.2.8
+// @version      1.2.9
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译,有道字典翻译和百度翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
@@ -17,6 +17,7 @@
 // @connect      cdn.bootcss.com
 // @connect      translate.google.cn
 // @connect      fanyi.youdao.com
+// @connect      dict.youdao.com
 // @connect      fanyi.baidu.com
 // @connect      shared.ydstatic.com
 // @require      https://cdn.jsdelivr.net/npm/jquery@2.2.3/dist/jquery.min.js
@@ -231,6 +232,38 @@
         });
     }
 
+    /**
+     * 获取有道翻译音标
+     * @param {String} transText 
+     * @param {Function} callback 
+     */
+    function getYDSymbol(transText, callback) {
+        var url = StringFormat("http://dict.youdao.com/fsearch?client=fanyideskweb&keyfrom=fanyi.web&q={0}&doctype=xml&xmlVersion=3.2&dogVersion=1.0&appVer=3.1.17.4208", encodeURIComponent(transText));
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: url,
+            timeout: 5000,
+            onload: function (ydRes) {
+                var xmlnode=ydRes.responseXML;
+                var symbol = {
+                    uk:"",
+                    us: ""
+                };
+                var root = xmlnode.getElementsByTagName("yodaodict")[0];
+                if ("" + root.getElementsByTagName("uk-phonetic-symbol")[0] != "undefined" && "" + root.getElementsByTagName("uk-phonetic-symbol")[0].childNodes[0] != "undefined") {
+                    symbol.uk = root.getElementsByTagName("uk-phonetic-symbol")[0].childNodes[0].nodeValue;
+                }
+                if ("" + root.getElementsByTagName("us-phonetic-symbol")[0] != "undefined" && "" + root.getElementsByTagName("us-phonetic-symbol")[0].childNodes[0] != "undefined") {
+                    symbol.us = root.getElementsByTagName("us-phonetic-symbol")[0].childNodes[0].nodeValue;
+                }
+                callback(symbol);
+            },
+            onerror: function (e) {
+                console.error(e);
+            }
+        });
+    }
+
     //有道翻译
     var youdaoTrans = {
         code: "yd",
@@ -259,7 +292,7 @@
                 h_headers = {},
                 h_data = "";
 
-            var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&version=2.1&doctype=json";
+            var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&smartresult=dict&version=2.1&doctype=json";
             var tempsalt = "" + (new Date).getTime() + parseInt(10 * Math.random(), 10);
             var newSign = this.sign != "" ? this.sign : "]BjuETDhU)zqSxf-=B#7m";
             var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + newSign);
@@ -298,9 +331,18 @@
                             Trans.transResult.trans = trans;
                             Trans.transResult.orig = origs;
                             Trans.transResult.origLang = src.split("2")[0];
-
+                            
+                            var smartResult = data.smartResult;
+                            if (smartResult && smartResult.entries.length > 0) {
+                                getYDSymbol(Trans.transText, function (symbol) {
+                                    Trans.transResult.symbols.en = symbol.uk;
+                                    Trans.transResult.symbols.am = symbol.us;
+                                    h_onloadfn();
+                                });
+                            }else {
+                                h_onloadfn();
+                            }
                         }
-                        h_onloadfn();
                     }, 300);
                 },
                 onerror: function (e) {
@@ -308,7 +350,7 @@
                 }
             });
         },
-        init:function(){
+        init: function () {
             getSign();
         }
     };
@@ -471,6 +513,7 @@
                     setTimeout(function () {
                         var result= JSON.parse(r.responseText);
                         var trans_result=result.trans_result;
+                        var dict_result=result.dict_result || null;
                         var transDatas = trans_result.data;
                         
                         var trans = [],origs = [],src = "";
@@ -483,6 +526,12 @@
                         Trans.transResult.trans = trans;
                         Trans.transResult.orig = origs;
                         Trans.transResult.origLang = src;
+                        
+                        if(dict_result){
+                            var symbols=dict_result.simple_means.symbols;
+                            Trans.transResult.symbols.en=symbols[0].ph_en || "";
+                            Trans.transResult.symbols.am=symbols[0].ph_am || "";
+                        }
                         h_onloadfn();
                     }, 300);
                 },
@@ -510,12 +559,17 @@
             //原文
             orig:[],
             //原文语言
-            origLang:""
+            origLang:"",
+            //音标
+            symbols:{
+                //英标
+                en:"",
+                //美标
+                am:"",
+            }
         },
         Execute:function(h_onloadfn){
-            this.transResult.trans=[];
-            this.transResult.orig=[];
-            this.transResult.origLang="";
+            resetTransResult(this);
             this.transEngineObj.Execute(h_onloadfn);
         },
         GetLangList:function(){
@@ -524,9 +578,7 @@
             return langList;
         },
         Update:function(){
-            this.transResult.trans=[];
-            this.transResult.orig=[];
-            this.transResult.origLang="";
+            resetTransResult(this);
             this.transEngineObj=this.transEngineList[this.transEngine];
             this.transTargetLang=this.transEngineObj.defaultTargetLang;
             this.transOrigLang=this.transEngineObj.defaultOrigLang;
@@ -564,6 +616,14 @@
             }
         }
     };
+
+    function resetTransResult(that){
+        that.transResult.trans=[];
+        that.transResult.orig=[];
+        that.transResult.origLang="";
+        that.transResult.symbols.en="";
+        that.transResult.symbols.am="";
+    }
 
     //面板
     var Panel={
@@ -733,100 +793,111 @@
     };
 
     //划词翻译面板
-    var WordTransPanel={
-        Create:function(popBoxEl,randomCode){
-            var self=this;
-            var html=this.GetTransContHtml();
-            var transEngineOptionsHtml="";
+    var WordTransPanel = {
+        Create: function (popBoxEl, randomCode) {
+            var self = this;
+            var html = this.GetTransContHtml();
+            var transEngineOptionsHtml = "";
             for (var k in Trans.transEngineList) {
                 if (Trans.transEngineList.hasOwnProperty(k)) {
                     var v = Trans.transEngineList[k].codeText;
-                    var selectOption="";
-                    if(Trans.transEngine==k){
-                        selectOption='selected="selected"';
+                    var selectOption = "";
+                    if (Trans.transEngine == k) {
+                        selectOption = 'selected="selected"';
                     }
-                    transEngineOptionsHtml+=StringFormat('<option value="{0}" {2}>{1}</option>',k,v,selectOption);
+                    transEngineOptionsHtml += StringFormat('<option value="{0}" {2}>{1}</option>', k, v, selectOption);
                 }
             }
-            var wordTransPanelHtml=StringFormat(
-                '<div>翻译引擎：<select>{2}</select>    翻译语言：<input type="text" value="{4}" readonly style="width:80px"/> &#x21E8; <select>{3}</select></div>'+
-                '<div style="word-wrap:break-word">{1}</div>'
-            ,randomCode,html.transHtml,transEngineOptionsHtml,html.langListHtml,html.origLangName);
-            
-            Panel.popBoxEl=popBoxEl;
-            Panel.randomCode=randomCode;
-            Panel.Create("","auto bottom",false,wordTransPanelHtml,function($panel){+
-                
+            var wordTransPanelHtml = StringFormat(
+                '<div>翻译引擎：<select>{2}</select>    翻译语言：<input type="text" value="{4}" readonly style="width:80px"/> &#x21E8; <select>{3}</select></div>' +
+                '<div style="word-wrap:break-word">{1}</div>', randomCode, html.transHtml, transEngineOptionsHtml, html.langListHtml, html.origLangName);
+
+            Panel.popBoxEl = popBoxEl;
+            Panel.randomCode = randomCode;
+            Panel.Create("", "auto bottom", false, wordTransPanelHtml, function ($panel) {
+                +
+
                 //目标语言
-                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).change(function(e){
-                    Trans.transTargetLang=$(this).find("option:selected").val();
-                    Trans.Execute(function(){
+                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)", randomCode)).change(function (e) {
+                    Trans.transTargetLang = $(this).find("option:selected").val();
+                    Trans.Execute(function () {
                         self.Update(randomCode);
                     });
                 });
                 //翻译引擎
-                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(0)",randomCode)).change(function(e){
-                    Trans.transEngine=$(this).find("option:selected").val();
+                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(0)", randomCode)).change(function (e) {
+                    Trans.transEngine = $(this).find("option:selected").val();
                     Trans.Update();
-                    Trans.Execute(function(){
+                    Trans.Execute(function () {
                         self.Update(randomCode);
                     });
                 });
             });
         },
-        Update:function(randomCode){
-            var self=this;
-            Panel.Update(function($panel){
-                var html=self.GetTransContHtml();
-                $panel.find(StringFormat("#panelBody{0} div:eq(0) input:eq(0)",randomCode)).val("").val(html.origLangName);
-                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)",randomCode)).html("").html(html.langListHtml);
-                $panel.find(StringFormat("#panelBody{0} div:eq(1)",randomCode)).html("").html(html.transHtml);
+        Update: function (randomCode) {
+            var self = this;
+            Panel.Update(function ($panel) {
+                var html = self.GetTransContHtml();
+                $panel.find(StringFormat("#panelBody{0} div:eq(0) input:eq(0)", randomCode)).val("").val(html.origLangName);
+                $panel.find(StringFormat("#panelBody{0} div:eq(0) select:eq(1)", randomCode)).html("").html(html.langListHtml);
+                $panel.find(StringFormat("#panelBody{0} div:eq(1)", randomCode)).html("").html(html.transHtml);
             });
         },
-        GetTransContHtml:function(){
-            var transObj={};
-            var langListHtml=[];
-            var langList=Trans.GetLangList();
-            var origLang=Trans.transResult.origLang;
-            var transContHtml="";
+        GetTransContHtml: function () {
+            var transObj = {};
+            var langListHtml = [];
+            var langList = Trans.GetLangList();
+            var origLang = Trans.transResult.origLang;
+            var transContHtml = "";
 
-            if(Trans.transResult.trans.length>0 && Trans.transResult.orig.length>0)
-            {
-                var transHtml=[];
+            if (Trans.transResult.trans.length > 0 && Trans.transResult.orig.length > 0) {
+                //译文
+                var transHtml = [];
                 transHtml.push('<div style="padding-top: 5px;"><ul style="list-style: none;margin: 0;padding: 0;">');
                 for (var i = 0; i < Trans.transResult.trans.length; i++) {
                     var transtxt = Trans.transResult.trans[i];
-                    transHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',transtxt));
+                    transHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>', transtxt));
                 }
                 transHtml.push("</ul></div>");
-
-                var origHtml=[];
+                //原文
+                var origHtml = [];
+                //原文内容
                 origHtml.push('<div style="padding-bottom: 5px;"><ul style="list-style: none;margin: 0;padding: 0;">');
                 for (var j = 0; j < Trans.transResult.orig.length; j++) {
                     var origtxt = Trans.transResult.orig[j];
-                    origHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>',origtxt));
+                    origHtml.push(StringFormat('<li style="list-style: none;"><span>{0}</span></li>', origtxt));
                 }
-                origHtml.push("</ul></div>");
-                transContHtml=origHtml.join("")+"<hr/>"+transHtml.join("");
-                Trans.transOrigLang=origLang;
-            }
-            else {
-                var txt="该翻译引擎不支持 "+langList[Trans.transOrigLang]+" 翻译成 "+langList[Trans.transTargetLang];
-                transContHtml=StringFormat("<div><span>{0}</span></div>",txt);
+                origHtml.push("</ul>");
+                //原文音标
+                if (Trans.transResult.symbols.en!="" || Trans.transResult.symbols.am!="") {
+                    origHtml.push('<div>');
+                    if(Trans.transResult.symbols.en!="")
+                    origHtml.push(StringFormat('<span style="padding-right: 10px;">英 [{0}]</span>',Trans.transResult.symbols.en));
+                    if(Trans.transResult.symbols.am!="")
+                    origHtml.push(StringFormat('<span>美 [{0}]</span>',Trans.transResult.symbols.am));
+                    origHtml.push('</div>');
+                }
+                origHtml.push("</div>");
+
+                transContHtml = origHtml.join("") + "<hr/>" + transHtml.join("");
+                Trans.transOrigLang = origLang;
+            } else {
+                var txt = "该翻译引擎不支持 " + langList[Trans.transOrigLang] + " 翻译成 " + langList[Trans.transTargetLang];
+                transContHtml = StringFormat("<div><span>{0}</span></div>", txt);
             }
             for (var k in langList) {
-                if (langList.hasOwnProperty(k) && k!=Trans.transOrigLang && k.toUpperCase()!="AUTO") {
+                if (langList.hasOwnProperty(k) && k != Trans.transOrigLang && k.toUpperCase() != "AUTO") {
                     var v = langList[k];
-                    var selectOption="";
-                    if(Trans.transTargetLang==k){
-                        selectOption='selected="selected"';
+                    var selectOption = "";
+                    if (Trans.transTargetLang == k) {
+                        selectOption = 'selected="selected"';
                     }
-                    langListHtml.push(StringFormat('<option value="{0}" {2}>{1}</option>',k,v,selectOption));
+                    langListHtml.push(StringFormat('<option value="{0}" {2}>{1}</option>', k, v, selectOption));
                 }
             }
-            transObj.origLangName=langList[Trans.transOrigLang];
-            transObj.transHtml=transContHtml;
-            transObj.langListHtml=langListHtml.join("");
+            transObj.origLangName = langList[Trans.transOrigLang];
+            transObj.transHtml = transContHtml;
+            transObj.langListHtml = langListHtml.join("");
             return transObj;
         }
     };

@@ -16,12 +16,17 @@ export var Trans={
         //原文
         orig:[],
         //原文语言
-        origLang:""
+        origLang:"",
+        //音标
+        symbols:{
+            //英标
+            en:"",
+            //美标
+            am:"",
+        }
     },
     Execute:function(h_onloadfn){
-        this.transResult.trans=[];
-        this.transResult.orig=[];
-        this.transResult.origLang="";
+        resetTransResult(this)
         this.transEngineObj.Execute(h_onloadfn);
     },
     GetLangList:function(){
@@ -30,9 +35,7 @@ export var Trans={
         return langList;
     },
     Update:function(){
-        this.transResult.trans=[];
-        this.transResult.orig=[];
-        this.transResult.origLang="";
+        resetTransResult(this)
         this.transEngineObj=this.transEngineList[this.transEngine];
         this.transTargetLang=this.transEngineObj.defaultTargetLang;
         this.transOrigLang=this.transEngineObj.defaultOrigLang;
@@ -69,4 +72,12 @@ export var Trans={
             }
         }
     }
+}
+
+function resetTransResult(that){
+    that.transResult.trans=[];
+    that.transResult.orig=[];
+    that.transResult.origLang="";
+    that.transResult.symbols.en="";
+    that.transResult.symbols.am="";
 }

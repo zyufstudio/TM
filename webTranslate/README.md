@@ -15,6 +15,7 @@
 - 2020/4/22  v1.2.2     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复显示翻译面板后再打开设置时，无法关闭翻译面板的问题
 - 2020/8/25  v1.2.6     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修复有道翻译引擎只能翻译前部分内容
 - 2020/8/28  v1.2.8     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更改有道翻译签名,并且兼容暴力猴
+- 2021/3/9   v1.2.9     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;百度翻译和有道翻译加入音标
 
 ### 适用网站
 - 所有网站

@@ -5,6 +5,7 @@ import {
     Trans
 } from "../trans"
 import getSign from "./getSign"
+import getYDSymbol from "./getYDSymbol"
 
 //有道翻译
 export var youdaoTrans = {
@@ -34,7 +35,7 @@ export var youdaoTrans = {
             h_headers = {},
             h_data = "";
 
-        var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&version=2.1&doctype=json";
+        var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&smartresult=dict&version=2.1&doctype=json";
         var tempsalt = "" + (new Date).getTime() + parseInt(10 * Math.random(), 10);
         var newSign = this.sign != "" ? this.sign : "]BjuETDhU)zqSxf-=B#7m";
         var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + newSign);
@@ -73,9 +74,18 @@ export var youdaoTrans = {
                         Trans.transResult.trans = trans;
                         Trans.transResult.orig = origs;
                         Trans.transResult.origLang = src.split("2")[0];
-
+                        
+                        var smartResult = data.smartResult;
+                        if (smartResult && smartResult.entries.length > 0) {
+                            getYDSymbol(Trans.transText, function (symbol) {
+                                Trans.transResult.symbols.en = symbol.uk;
+                                Trans.transResult.symbols.am = symbol.us;
+                                h_onloadfn();
+                            })
+                        }else {
+                            h_onloadfn();
+                        }
                     }
-                    h_onloadfn();
                 }, 300);
             },
             onerror: function (e) {
@@ -83,7 +93,7 @@ export var youdaoTrans = {
             }
         });
     },
-    init:function(){
+    init: function () {
         getSign()
     }
 }

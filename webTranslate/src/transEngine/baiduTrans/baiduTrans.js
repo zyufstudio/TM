@@ -68,6 +68,7 @@ export var baiduTrans = {
                 setTimeout(function () {
                     var result= JSON.parse(r.responseText);
                     var trans_result=result.trans_result;
+                    var dict_result=result.dict_result || null
                     var transDatas = trans_result.data;
                     
                     var trans = [],origs = [],src = "";
@@ -80,6 +81,12 @@ export var baiduTrans = {
                     Trans.transResult.trans = trans;
                     Trans.transResult.orig = origs;
                     Trans.transResult.origLang = src;
+                    
+                    if(dict_result){
+                        var symbols=dict_result.simple_means.symbols
+                        Trans.transResult.symbols.en=symbols[0].ph_en || ""
+                        Trans.transResult.symbols.am=symbols[0].ph_am || ""
+                    }
                     h_onloadfn();
                 }, 300);
             },
