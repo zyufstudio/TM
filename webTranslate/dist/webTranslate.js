@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         网页翻译助手
-// @version      1.2.9
+// @version      1.3.1
 // @namespace    https://github.com/zyufstudio/TM/tree/master/webTranslate
 // @description  支持划词翻译，输入文本翻译,谷歌整页翻译。可以自行选择谷歌翻译,有道字典翻译和百度翻译。
 // @icon         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAENklEQVRoQ+2ZTVITQRTH/28qyNIJFxCqnGwNJzCcwHACcelkIZxAPAG4IFkaTyCegHgC4jZjVfACzLBEUvOs7jCx57unZ6JSRZZJ9+v3e+/1++gQHviHHrj+eAT41x4s9YA99F5qK3nb+h4c7QTa6xtYmAuwNfLeg3Fc5QxmBGy1doO3O1dV9tVZmwmwdeYdg/DeTDB/vnY7B2Z7q+/KBhh6XF3UcgeDr3y3s2O6v+q+FIB9NutaRJdVBanrQ+bdYNCZ1pGhuzcNMPJ6FuNCV0DWuhA4ClzntI4M3b1rARBhRERjXSWK1oUhfy3y5loAmlBclcHAue86+1lyHwTAfXb4cD1wUmm9EgAzfhLoPLT4fGUNRpeAPgH6Bc/ARcw89Qed3eRWLQAGbhg4LrqY9sjrUYgxEZ7FDmH6GAPWUZ7JJvBh0ijXrpPStxRAKs/c00mLAiKewcyLmn0yt63Nha/yGgGEoP3Afb4KGSEYT+5eWxbZQniUJUT9INAFEeT3RXGr4wSxpj30JqoXKgMw8M13nV50oH02OyDQSUxJWX55zKB+8vu8uP1rAKr17dF8m8LFZUr5Em1Cau2ozZ09/NEn8Dum1puypq+2B1SXbQ1nY4Be61rvTxjxOPy1cRS12e2z2SURdcHITIuq/FoA4vL6rrOK56QwBn/n241eXv/fHs6mBHpRFViEHVsb+8I79QAYgT9w2pECSWFlFlxZuiqBSAz3YVcLQJxbFEJyeGEcwMJyAmO+UVPtltKSJzOZyiTuhAX+woyv/sDpNxZCMkUqKVReYl5MCXiaZdSQ+U0w6MgGLt2S59eD9tC7IKCn7s/zukkanfiusxdLo0SnaYi4gnkTXXLYiQqfLJa3re3kfaodQkkvSOuKQra5OLB4WbBCC5PgrTNZQZ7MbXqymKdqAnAjwZXsU5aRGgGQsQ7e02olpPJ3FzJNJj4ixonwSkIz71qgvpi7RYPoD5ztrLBsBCASHDIfBoPOx7yksmwl8ClLeXnHgW/ENAXxO2GUyENF42ejAEsl+Eq204DSTnOXiHqipS7LmOFtq02bi/OovykbPRsHKFNQ4/dTkXoj68ui9WtjL78Y1mzmNBQyWiKqOETPT3hWBPE/egBRwRLZjDbvJqLdyIP4LwFCwl6UdssgzAAaeNgqjKtEFxqDAGKF0whAHK72MUZBXrApOSRFxXGZnfhKfVc1B6j1uFuGrD8nGwNIL6wBIq/nyUOuBbDqbUbeaiYus230uxWil/U8X9RWZ7cSszmBVm2GVjeqq2TZuqwRtAqAeECwiD6p5/xVgGhQSTd1PAVRyd9QvK1a/r6Xio24kdzS/8jKLF30e3voBXkDUFW5WRObkLFWAOOXjASdvPzU6mY9w6wVYFmk/nSfla0O3IAxYat1mPeGtFaAqgqbrH8EMLFak3sePdCkNU1k/QadtchPhjx3/AAAAABJRU5ErkJggg==
@@ -153,32 +153,57 @@
 
     //谷歌翻译
     var googleTrans = {
-        code:"ge",
-        codeText:"谷歌",
-        defaultOrigLang:"auto",         //默认源语言
-        defaultTargetLang:"zh-CN",      //默认目标语言
-        langList: {"auto": "自动检测","zh-CN": "中文简体","zh-TW": "中文繁体","en": "英文","ja": "日文","ko": "韩文","fr": "法文","es": "西班牙文","pt": "葡萄牙文","it": "意大利文","ru": "俄文","vi": "越南文","de": "德文","ar": "阿拉伯文","id": "印尼文"},
+        code: "ge",
+        codeText: "谷歌",
+        defaultOrigLang: "auto", //默认源语言
+        defaultTargetLang: "zh-CN", //默认目标语言
+        langList: {
+            "auto": "自动检测",
+            "zh-CN": "中文简体",
+            "zh-TW": "中文繁体",
+            "en": "英文",
+            "ja": "日文",
+            "ko": "韩文",
+            "fr": "法文",
+            "es": "西班牙文",
+            "pt": "葡萄牙文",
+            "it": "意大利文",
+            "ru": "俄文",
+            "vi": "越南文",
+            "de": "德文",
+            "ar": "阿拉伯文",
+            "id": "印尼文"
+        },
         Execute: function (h_onloadfn) {
-            var h_url = "";
-            var googleTransApi = StringFormat("https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&sl={1}&tl={0}&hl=zh-CN", Trans.transTargetLang,Trans.transOrigLang);
-            h_url = googleTransApi + "&q=" + encodeURIComponent(Trans.transText);
-
             GM_xmlhttpRequest({
-                method: "GET",
-                url: h_url,
+                method: "POST",
+                url: "https://translate.google.cn/_/TranslateWebserverUi/data/batchexecute",
+                headers: {
+                    "Referer": `https://translate.google.cn/`,
+                    "Cache-Control": "max-age=0",
+                    "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+                },
+                data: "f.req=" + encodeURIComponent(JSON.stringify([
+                    [
+                        ["MkEWBc", JSON.stringify([
+                            [Trans.transText, Trans.transOrigLang, Trans.transTargetLang, true],
+                            [null]
+                        ]), null, "generic"]
+                    ]
+                ])),
                 onload: function (r) {
                     setTimeout(function () {
-                        var data = JSON.parse(r.responseText);
-                        var trans = [],origs = [],src = "";
-                        for (var i = 0; i < data.sentences.length; i++) {
-                            var getransCont = data.sentences[i];
-                            trans.push(getransCont.trans);
-                            origs.push(getransCont.orig);
+                        var resData=r.responseText;
+                        var transData=JSON.parse(JSON.parse(resData.match(/\[{2}.*\]{2}/g)[0])[0][2]);
+                        var transList=transData[1][0][0][5];
+                        var transTexts=[];
+                        for (let index = 0; index < transList.length; index++) {
+                            var transItem = transList[index];
+                            transTexts.push(transItem[0]);
                         }
-                        src = data.src;
-                        Trans.transResult.trans = trans;
-                        Trans.transResult.orig = origs;
-                        Trans.transResult.origLang = src;
+                        Trans.transResult.trans = transTexts;
+                        Trans.transResult.orig = transData[1][4][0].split("\n");
+                        Trans.transResult.origLang = transData[2];
                         h_onloadfn();
                     }, 300);
                 },
@@ -1093,4 +1118,4 @@
     var webTrans=new WebTranslate();
     webTrans.init();
 
-}());
+})();

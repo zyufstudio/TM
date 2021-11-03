@@ -1,4 +1,4 @@
-import {googleTrans}from "./googleTrans"
+import {googleTrans}from "./googleTrans/googleTrans"
 import {youdaoTrans} from "./youdaoTrans/youdaoTrans"
 import {baiduTrans} from "./baiduTrans/baiduTrans"
 
