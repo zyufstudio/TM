@@ -36,15 +36,30 @@ export var youdaoTrans = {
             h_data = "";
 
         var youdaoTransApi = "http://fanyi.youdao.com/translate_o?client=fanyideskweb&keyfrom=fanyi.web&smartresult=dict&version=2.1&doctype=json";
-        var tempsalt = "" + (new Date).getTime() + parseInt(10 * Math.random(), 10);
-        var newSign = this.sign != "" ? this.sign : "]BjuETDhU)zqSxf-=B#7m";
-        var tempsign = $.md5("fanyideskweb" + Trans.transText + tempsalt + newSign);
+        var userAgent=$.md5(navigator.userAgent);
+        var currentTs="" + (new Date).getTime();
+        var salt=currentTs + parseInt(10 * Math.random(), 10);
+        
+        var r = function(e) {
+            var t = n.md5(navigator.userAgent)
+              , r = "" + (new Date).getTime()
+              , i = r + parseInt(10 * Math.random(), 10);
+            return {
+                ts: r,
+                bv: t,
+                salt: i,
+                sign: n.md5("fanyideskweb" + e + i + "Ygy_4c=r#e#4EX^NUGUc5")
+            }
+        };
+        
+        var sign = this.sign != "" ? this.sign : "]BjuETDhU)zqSxf-=B#7m";
+        var signStr = $.md5("fanyideskweb" + Trans.transText + salt + sign);
         h_url = youdaoTransApi;
         h_headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Referer": "http://fanyi.youdao.com/"
         }
-        h_data = StringFormat("from={0}&to={1}&salt={2}&sign={3}&i={4}", Trans.transOrigLang, Trans.transTargetLang, tempsalt, tempsign, encodeURIComponent(Trans.transText));
+        h_data = StringFormat("from={0}&to={1}&salt={2}&sign={3}&i={4}&lts={5}&bv={6}", Trans.transOrigLang, Trans.transTargetLang, salt, signStr, encodeURIComponent(Trans.transText),currentTs,userAgent);
 
         GM_xmlhttpRequest({
             method: "POST",
