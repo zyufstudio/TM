@@ -15,7 +15,7 @@
 // @grant        GM_getValue
 // @connect      cdn.jsdelivr.net
 // @connect      cdn.bootcss.com
-// @connect      translate.google.cn
+// @connect      translate.google.com.hk
 // @connect      fanyi.youdao.com
 // @require      https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/jquery.md5@1.0.2/index.min.js
@@ -121,7 +121,7 @@
             GM_registerMenuCommand("Google整页翻译",function(){
                 if(guid=="") 
                     guid=getGuid();
-                var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
+                var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.com.hk/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
                 $head.append(StringFormat('<script>{0}</script>',cbscript));
             });
             GM_registerMenuCommand("设置",function(){
@@ -475,7 +475,7 @@
                         break;
                     case "ge":
                     default:
-                        var googleTransApi=StringFormat("https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&sl={1}&tl={0}&hl=zh-CN",self.transTargetLang,self.transOrigLang);
+                        var googleTransApi=StringFormat("https://translate.google.com.hk/translate_a/single?client=gtx&dt=t&dj=1&sl={1}&tl={0}&hl=zh-CN",self.transTargetLang,self.transOrigLang);
                         h_url=googleTransApi+"&q="+encodeURIComponent(self.transText);
                         break;
                 }

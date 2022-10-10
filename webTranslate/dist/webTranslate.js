@@ -15,7 +15,7 @@
 // @grant        GM_getValue
 // @connect      cdn.jsdelivr.net
 // @connect      cdn.bootcss.com
-// @connect      translate.google.cn
+// @connect      translate.google.com.hk
 // @connect      fanyi.youdao.com
 // @connect      dict.youdao.com
 // @connect      fanyi.baidu.com
@@ -177,9 +177,9 @@
         Execute: function (h_onloadfn) {
             GM_xmlhttpRequest({
                 method: "POST",
-                url: "https://translate.google.cn/_/TranslateWebserverUi/data/batchexecute",
+                url: "https://translate.google.com.hk/_/TranslateWebserverUi/data/batchexecute",
                 headers: {
-                    "Referer": `https://translate.google.cn/`,
+                    "Referer": `https://translate.google.com.hk/`,
                     "Cache-Control": "max-age=0",
                     "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
                 },
@@ -1097,7 +1097,7 @@
             GM_registerMenuCommand("Google整页翻译",function(){
                 if(guid=="") 
                     guid=Guid();
-                var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.cn/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
+                var cbscript=StringFormat('!function(){!function(){function e(){window.setTimeout(function(){window[t].showBanner(!0)},10)}function n(){return new google.translate.TranslateElement({autoDisplay:!1,floatPosition:0,multilanguagePage:!0,includedLanguages:"zh-CN,zh-TW,en",pageLanguage:"auto"})}var t=(document.documentElement.lang,"TE_{0}"),o="TECB_{0}";if(window[t])e();else if(!window.google||!google.translate||!google.translate.TranslateElement){window[o]||(window[o]=function(){window[t]=n(),e()});var a=document.createElement("script");a.src="https://translate.google.com.hk/translate_a/element.js?cb="+encodeURIComponent(o)+"&client=tee",document.getElementsByTagName("head")[0].appendChild(a)}}()}();',guid);
                 $head.append(StringFormat('<script>{0}</script>',cbscript));
             });
             GM_registerMenuCommand("设置",function(){

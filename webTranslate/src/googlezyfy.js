@@ -31,7 +31,7 @@
                     }
                 }
                 var s = document.createElement("script");
-                s.src = "https://translate.google.cn/translate_a/element.js?cb=" + encodeURIComponent(cbId) +
+                s.src = "https://translate.google.com.hk/translate_a/element.js?cb=" + encodeURIComponent(cbId) +
                     "&client=tee";
                 document.getElementsByTagName("head")[0].appendChild(s)
             }
