@@ -31,9 +31,9 @@ export var googleTrans = {
     Execute: function (h_onloadfn) {
         GM_xmlhttpRequest({
             method: "POST",
-            url: "https://translate.google.cn/_/TranslateWebserverUi/data/batchexecute",
+            url: "https://translate.google.com.hk/_/TranslateWebserverUi/data/batchexecute",
             headers: {
-                "Referer": `https://translate.google.cn/`,
+                "Referer": `https://translate.google.com.hk/`,
                 "Cache-Control": "max-age=0",
                 "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
             },

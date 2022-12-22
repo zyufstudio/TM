@@ -15,7 +15,7 @@
 // @grant        GM_getValue
 // @connect      cdn.jsdelivr.net
 // @connect      cdn.bootcss.com
-// @connect      translate.google.cn
+// @connect      translate.google.com.hk
 // @connect      fanyi.youdao.com
 // @connect      dict.youdao.com
 // @connect      fanyi.baidu.com
