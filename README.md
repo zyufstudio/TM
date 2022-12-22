@@ -4,8 +4,6 @@ Tampermonkey 是一款免费的浏览器扩展和最为流行的用户脚本管�
 ##### Tampermonkey (TM)官网：[www.tampermonkey.net](http://www.tampermonkey.net/)
 
 ##### 本站提供的油猴脚本简介
-- *goTop (返回顶部)* [点此安装脚本](https://greasyfork.org/zh-CN/scripts/384622-%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8)
-    - 返回顶部，在网页右下角创建一个返回顶部的按钮，点击按钮即可返回到顶部。
 
 - *goTopBottom (返回顶部和或底部)* [点此安装脚本](https://greasyfork.org/zh-CN/scripts/385225-%E8%BF%94%E5%9B%9E%E9%A1%B6%E9%83%A8%E5%92%8C%E5%BA%95%E9%83%A8)
     - 返回顶部或底部，在网页右下角创建一个返回顶部和底部的按钮，点击按钮即可返回到顶部或底部。
@@ -18,6 +16,3 @@ Tampermonkey 是一款免费的浏览器扩展和最为流行的用户脚本管�
 
 - *ifmRadio(iFM-网络收音机广播电台)*[点此安装脚本](https://greasyfork.org/zh-CN/scripts/411743-ifm-%E7%BD%91%E7%BB%9C%E6%94%B6%E9%9F%B3%E6%9C%BA%E5%B9%BF%E6%92%AD%E7%94%B5%E5%8F%B0)
     - FM网络收音机，广播电台在线收听。
-
-- *githubDownload (github下载)* [点此安装脚本]()
-    - 从github下载任意文件或文件夹
